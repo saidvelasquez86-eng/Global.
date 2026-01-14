@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLOBAL V0.5.7 | Pro Edition</title>
+    <title>GLOBAL V0.5.8 | Cloud Security</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -17,14 +17,13 @@
 </head>
 <body class="bg-gray-100 font-sans">
 
-    <div id="sideMenu" class="fixed top-0 h-full w-72 bg-slate-900 text-white p-5 shadow-2xl overflow-y-auto">
-        <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4 text-yellow-500 italic font-black text-2xl">GLOBAL <button onclick="toggleMenu()" class="text-white text-3xl">×</button></div>
+    <div id="sideMenu" class="fixed top-0 h-full w-72 bg-slate-900 text-white p-5 shadow-2xl z-[2000]">
+        <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4 text-yellow-500 font-black text-2xl italic">GLOBAL <button onclick="toggleMenu()" class="text-white text-3xl">×</button></div>
         <nav class="space-y-4 font-bold">
             <button onclick="showView('catalog')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3"><i class="fas fa-home text-yellow-500"></i> Inicio</button>
-            <div class="mt-6 p-4 bg-slate-800 rounded-xl">
-                <p class="text-[10px] text-gray-400 uppercase mb-2">Dirección de Entrega</p>
-                <textarea id="manualAddress" placeholder="Dirección exacta..." class="w-full bg-slate-700 text-white p-2 rounded-lg h-20 outline-none text-xs"></textarea>
-                <label class="flex items-center gap-2 mt-2 text-[10px] cursor-pointer"><input type="checkbox" id="gpsToggle" checked class="accent-yellow-500"> Enviar Ubicación GPS</label>
+            <div class="mt-6 p-4 bg-slate-800 rounded-xl text-xs">
+                <p class="text-gray-400 uppercase mb-2 italic">Dirección de Entrega</p>
+                <textarea id="manualAddress" placeholder="Tu dirección aquí..." class="w-full bg-slate-700 text-white p-2 rounded-lg h-20 outline-none"></textarea>
             </div>
             <button onclick="accessAdmin()" class="w-full text-left p-3 text-red-400 mt-10 border-t border-gray-800 pt-6 flex items-center gap-3"><i class="fas fa-lock"></i> Panel Admin</button>
         </nav>
@@ -41,7 +40,7 @@
                 </div>
             </div>
             <div class="relative w-full">
-                <input type="text" id="searchInput" onkeyup="renderLocalProducts()" placeholder="Buscar en Global..." class="w-full p-2.5 pl-10 rounded-lg text-black outline-none shadow-md">
+                <input type="text" id="searchInput" onkeyup="renderLocalProducts()" placeholder="¿Qué buscas hoy?" class="w-full p-2.5 pl-10 rounded-lg text-black outline-none shadow-md">
                 <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
             </div>
         </div>
@@ -50,54 +49,53 @@
     <main class="max-w-6xl mx-auto p-4">
         <section id="catalogView">
             <div id="adminPanel" class="hidden bg-white p-6 rounded-2xl shadow-xl mb-8 border-2 border-yellow-500">
-                <div class="flex justify-between items-center mb-6"><h2 id="adminActionTitle" class="font-black italic uppercase">Gestión de Tienda</h2><button onclick="closeAdmin()" class="text-red-500 text-2xl">✕</button></div>
+                <div class="flex justify-between items-center mb-6"><h2 class="font-black italic uppercase">Configuración</h2><button onclick="closeAdmin()" class="text-red-500 text-2xl">✕</button></div>
                 
-                <div class="mb-6 p-4 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                    <p class="text-[10px] font-bold text-gray-500 uppercase mb-2">Seguridad del Panel</p>
+                <div class="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                    <p class="text-[10px] font-bold text-blue-600 uppercase mb-2">Seguridad (Contraseña de Administración)</p>
                     <div class="flex gap-2">
-                        <input type="password" id="newAdminPass" placeholder="Nueva Contraseña" class="border p-2 rounded-lg w-full text-sm">
-                        <button onclick="updatePasswordInCloud()" class="bg-blue-600 text-white px-4 rounded-lg text-xs font-bold">CAMBIAR</button>
+                        <input type="text" id="newAdminPass" placeholder="Nueva Clave" class="border p-2 rounded-lg w-full text-sm">
+                        <button onclick="updateCloudPassword()" class="bg-blue-600 text-white px-4 rounded-lg text-xs font-bold hover:bg-blue-700">GUARDAR CLAVE</button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="hidden" id="editId">
-                    <input type="text" id="prodName" placeholder="Nombre" class="border p-3 rounded-lg w-full">
+                    <input type="text" id="prodName" placeholder="Nombre del Producto" class="border p-3 rounded-lg w-full">
                     <div class="flex gap-2">
                         <input type="number" id="prodPrice" placeholder="Precio" class="border p-3 rounded-lg w-full">
                         <select id="prodCurrency" class="border p-3 rounded-lg"><option value="$">$ USD</option><option value="C$">C$ NIO</option></select>
                     </div>
                     <input type="number" id="prodStock" placeholder="Stock" class="border p-3 rounded-lg w-full">
-                    <input type="text" id="adminWhatsapp" placeholder="WhatsApp Receptor (Ej: 50588888888)" class="border p-3 rounded-lg w-full bg-yellow-50">
-                    <input type="file" id="prodFile" class="border p-2 rounded-lg w-full text-xs">
+                    <input type="text" id="adminWhatsapp" placeholder="Número WhatsApp (Ej: 50588888888)" class="border p-3 rounded-lg w-full bg-yellow-50">
+                    <input type="file" id="prodFile" class="text-xs w-full">
                     <button onclick="saveToFirebase()" class="md:col-span-2 bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase flex justify-center items-center gap-3">
-                        <span id="saveBtnText">GUARDAR CAMBIOS</span><div id="saveLoader" class="loader"></div>
+                        <span id="saveBtnText">GUARDAR PRODUCTO</span><div id="saveLoader" class="loader"></div>
                     </button>
                 </div>
 
                 <div class="mt-8 overflow-x-auto">
-                    <table class="w-full text-left text-[11px]"><tbody id="adminTableBody"></tbody></table>
+                    <table class="w-full text-[11px] text-left"><tbody id="adminTableBody"></tbody></table>
                 </div>
             </div>
-
             <div id="productGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
         </section>
     </main>
 
-    <div id="cartModal" class="fixed right-0 top-0 h-full w-full md:w-80 bg-white shadow-2xl p-6 hidden z-[1200]">
-        <div class="flex justify-between items-center mb-6 border-b pb-4"><h2 class="font-black italic">MI PEDIDO</h2><button onclick="toggleCart()" class="text-3xl">✕</button></div>
+    <div id="cartModal" class="fixed right-0 top-0 h-full w-full md:w-80 bg-white shadow-2xl p-6 hidden z-[3000]">
+        <div class="flex justify-between items-center mb-6 border-b pb-4 font-black">CARRITO <button onclick="toggleCart()" class="text-3xl">✕</button></div>
         <div id="cartItems" class="space-y-4 overflow-y-auto max-h-[60vh]"></div>
         <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-gray-50">
-            <div id="totalContainer" class="text-xl font-black mb-4 text-center"></div>
+            <div id="totalContainer" class="text-xl font-black mb-4"></div>
             <button onclick="sendOrder()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black flex items-center justify-center gap-2 uppercase">
-                <i class="fab fa-whatsapp text-xl"></i> REALIZAR PEDIDO
+                <i class="fab fa-whatsapp"></i> PEDIR POR WHATSAPP
             </button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc, setDoc } 
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, setDoc, getDoc } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -117,17 +115,36 @@
         window.allProducts = [];
         let currentPass = "1234";
 
-        onSnapshot(configRef, (s) => { if(s.exists()) currentPass = s.data().pass; });
+        // Escuchar cambios de clave en la nube
+        onSnapshot(configRef, (docSnap) => {
+            if(docSnap.exists()) {
+                currentPass = docSnap.data().pass;
+                console.log("Clave cargada desde la nube.");
+            }
+        });
 
-        window.updatePasswordInCloud = async () => {
+        // FUNCION PARA CAMBIAR CLAVE
+        window.updateCloudPassword = async () => {
             const newP = document.getElementById('newAdminPass').value;
-            if(!newP) return alert("Escribe una clave");
-            await setDoc(configRef, { pass: newP });
-            alert("Contraseña actualizada con éxito.");
-            document.getElementById('newAdminPass').value = "";
+            if(!newP) return alert("Escribe la nueva clave primero.");
+            try {
+                await setDoc(configRef, { pass: newP }, { merge: true });
+                alert("¡Éxito! La nueva contraseña es: " + newP);
+                document.getElementById('newAdminPass').value = "";
+            } catch (e) {
+                alert("Error al guardar: " + e.message);
+            }
         };
 
-        window.accessAdmin = () => { if(prompt("Clave de acceso:") === currentPass) { document.getElementById('adminPanel').classList.remove('hidden'); toggleMenu(); } };
+        window.accessAdmin = () => {
+            const pass = prompt("Introduce la clave de administrador:");
+            if(pass === currentPass) {
+                document.getElementById('adminPanel').classList.remove('hidden');
+                toggleMenu();
+            } else if (pass !== null) {
+                alert("Clave incorrecta.");
+            }
+        };
 
         onSnapshot(query(prodsRef, orderBy("timestamp", "desc")), (s) => {
             window.allProducts = [];
@@ -144,15 +161,20 @@
             const wa = document.getElementById('adminWhatsapp').value;
             const file = document.getElementById('prodFile').files[0];
             
+            if(!name || !price) return alert("Nombre y precio son necesarios.");
             document.getElementById('saveLoader').style.display = 'block';
-            const run = async (img) => {
-                const d = { name, price, currency: document.getElementById('prodCurrency').value, stock, timestamp: Date.now() };
-                if(img) d.img = img;
-                if(id) await updateDoc(doc(db, "productos", id), d); else await addDoc(prodsRef, d);
+
+            const runSave = async (img64) => {
+                const data = { name, price, currency: document.getElementById('prodCurrency').value, stock, timestamp: Date.now() };
+                if(img64) data.img = img64;
+                if(id) await updateDoc(doc(db, "productos", id), data); else await addDoc(prodsRef, data);
                 if(wa) localStorage.setItem('global_wa', wa);
-                closeAdmin(); document.getElementById('saveLoader').style.display = 'none';
+                closeAdmin();
+                document.getElementById('saveLoader').style.display = 'none';
             };
-            if(file) { const r = new FileReader(); r.onload = (e) => run(e.target.result); r.readAsDataURL(file); } else run(null);
+
+            if(file) { const r = new FileReader(); r.onload = (e) => runSave(e.target.result); r.readAsDataURL(file); } 
+            else { runSave(null); }
         };
 
         window.reduceStock = async (items) => {
@@ -163,7 +185,7 @@
             }
         };
 
-        window.deleteFromFirebase = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "productos", id)); };
+        window.deleteFromFirebase = async (id) => { if(confirm("¿Eliminar este producto?")) await deleteDoc(doc(db, "productos", id)); };
     </script>
 
     <script>
@@ -177,15 +199,15 @@
             const search = document.getElementById('searchInput').value.toLowerCase();
             grid.innerHTML = '';
             window.allProducts.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
-                const agotado = p.stock <= 0;
+                const out = p.stock <= 0;
                 grid.innerHTML += `
-                <div class="product-card flex flex-col border shadow-sm ${agotado?'grayscale opacity-60':''}">
+                <div class="product-card flex flex-col shadow-sm border ${out?'grayscale opacity-60':''}">
                     <img src="${p.img || 'https://via.placeholder.com/150'}" class="w-full h-40 object-cover">
                     <div class="p-3">
                         <h3 class="font-bold text-[10px] uppercase line-clamp-2 h-8">${p.name}</h3>
-                        <p class="text-[10px] font-black ${agotado?'text-red-500':'text-green-600'}">${agotado?'AGOTADO':'STOCK: '+p.stock}</p>
+                        <p class="text-[10px] font-black ${out?'text-red-500':'text-green-600'}">${out?'AGOTADO':'DISPONIBLES: '+p.stock}</p>
                         <p class="text-lg font-black mt-1">${p.currency}${p.price}</p>
-                        <button onclick="addToCart('${p.id}')" ${agotado?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${agotado?'bg-gray-200 text-gray-400':'bg-yellow-400'}">AÑADIR</button>
+                        <button onclick="addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200 text-gray-400':'bg-yellow-400'}">AÑADIR</button>
                     </div>
                 </div>`;
             });
@@ -204,25 +226,17 @@
 
         function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
 
-        function sendOrder() {
+        async function sendOrder() {
             const wa = localStorage.getItem('global_wa');
-            if(!wa) return alert("Configura el WhatsApp en Admin");
-            const gps = document.getElementById('gpsToggle').checked;
+            if(!wa) return alert("Falta el número de WhatsApp en Admin");
             const dir = document.getElementById('manualAddress').value;
-            if(gps && navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(p => finalize(wa, p.coords.latitude, p.coords.longitude, dir), () => finalize(wa, null, null, dir));
-            } else finalize(wa, null, null, dir);
-        }
-
-        async function finalize(wa, lat, lon, dir) {
-            const listado = cart.map(p => `• ${p.name}`).join('%0A');
+            const list = cart.map(p => `• ${p.name}`).join('%0A');
             const total = document.getElementById('totalContainer').innerText;
-            await window.reduceStock(cart);
-            let txt = `🛍️ *PEDIDO GLOBAL*%0A%0A${listado}%0A%0A*${total}*%0A`;
-            if(dir) txt += `%0A🏠 *Dirección:* ${dir}`;
-            if(lat) txt += `%0A📍 *Mapa:* https://www.google.com/maps?q=${lat},${lon}`;
             
-            // LINK UNIVERSAL PARA MAC Y MÓVIL
+            await window.reduceStock(cart);
+            let txt = `🛍️ *NUEVO PEDIDO - GLOBAL*%0A%0A${list}%0A%0A*${total}*%0A`;
+            if(dir) txt += `%0A🏠 *Dirección:* ${dir}`;
+            
             window.open(`https://wa.me/${wa}?text=${txt}`, '_blank');
             cart = []; updateCartUI(); toggleCart();
         }
