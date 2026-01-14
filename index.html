@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLOBAL V0.5.9 | Full Store</title>
+    <title>GLOBAL V0.6.0 | Final Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .product-card { border: 1px solid #eee; transition: 0.2s; background: white; border-radius: 15px; overflow: hidden; }
+        .product-card { border: 1px solid #eee; transition: 0.2s; background: white; border-radius: 15px; overflow: hidden; cursor: pointer; }
         #sideMenu { transition: 0.3s; left: -100%; z-index: 1000; }
         #sideMenu.active { left: 0; }
         .amazon-gradient { background: #131921; }
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #fbbf24; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #detailModal.hidden { display: none; }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
@@ -50,20 +51,26 @@
     <main class="max-w-6xl mx-auto p-4">
         <section id="catalogView">
             <div id="adminPanel" class="hidden bg-white p-6 rounded-2xl shadow-xl mb-8 border-2 border-yellow-500">
-                <div class="flex justify-between items-center mb-6"><h2 class="font-black italic uppercase">Admin</h2><button onclick="closeAdmin()" class="text-red-500 text-2xl">✕</button></div>
-                <div class="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                    <p class="text-[10px] font-bold text-blue-600 uppercase mb-2">Contraseña del Sistema</p>
-                    <div class="flex gap-2">
-                        <input type="text" id="newAdminPass" placeholder="Nueva Clave" class="border p-2 rounded-lg w-full text-sm">
-                        <button onclick="updateCloudPassword()" class="bg-blue-600 text-white px-4 rounded-lg text-xs font-bold">GUARDAR</button>
-                    </div>
-                </div>
+                <div class="flex justify-between items-center mb-4"><h2 class="font-black italic uppercase">Admin Store</h2><button onclick="closeAdmin()" class="text-red-500 text-2xl">✕</button></div>
+                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="hidden" id="editId">
                     <input type="text" id="prodName" placeholder="Nombre" class="border p-3 rounded-lg w-full">
-                    <div class="flex gap-2"><input type="number" id="prodPrice" placeholder="Precio" class="border p-3 rounded-lg w-full"><select id="prodCurrency" class="border p-3 rounded-lg"><option value="$">$ USD</option><option value="C$">C$ NIO</option></select></div>
-                    <input type="number" id="prodStock" placeholder="Stock" class="border p-3 rounded-lg w-full"><input type="text" id="adminWhatsapp" placeholder="WhatsApp Receptor" class="border p-3 rounded-lg w-full bg-yellow-50"><input type="file" id="prodFile" class="text-xs w-full">
-                    <button onclick="saveToFirebase()" class="md:col-span-2 bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase flex justify-center gap-3"><span id="saveBtnText">GUARDAR</span><div id="saveLoader" class="loader"></div></button>
+                    <div class="flex gap-2">
+                        <input type="number" id="prodPrice" placeholder="Precio" class="border p-3 rounded-lg w-full">
+                        <select id="prodCurrency" class="border p-3 rounded-lg"><option value="$">$ USD</option><option value="C$">C$ NIO</option></select>
+                    </div>
+                    <input type="number" id="prodStock" placeholder="Stock" class="border p-3 rounded-lg w-full">
+                    <input type="text" id="adminWhatsapp" placeholder="WhatsApp Receptor" class="border p-3 rounded-lg w-full bg-yellow-50">
+                    <textarea id="prodDesc" placeholder="Descripción del producto..." class="border p-3 rounded-lg w-full md:col-span-2"></textarea>
+                    <input type="file" id="prodFile" class="text-xs w-full">
+                    <button onclick="saveToFirebase()" class="md:col-span-2 bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase flex justify-center items-center gap-3">
+                        <span id="saveBtnText">GUARDAR</span><div id="saveLoader" class="loader"></div>
+                    </button>
+                    <div class="md:col-span-2 p-3 bg-gray-100 rounded-lg flex gap-2">
+                        <input type="text" id="newAdminPass" placeholder="Nueva Clave Admin" class="border p-2 rounded-lg w-full text-xs">
+                        <button onclick="updateCloudPassword()" class="bg-blue-600 text-white px-4 rounded-lg text-[10px] font-bold">ACTUALIZAR CLAVE</button>
+                    </div>
                 </div>
                 <div class="mt-8 overflow-x-auto"><table class="w-full text-[11px] text-left"><tbody id="adminTableBody"></tbody></table></div>
             </div>
@@ -71,18 +78,36 @@
         </section>
 
         <section id="historyView" class="hidden">
-            <h2 class="text-xl font-black italic mb-4 uppercase">Mis Pedidos Recientes</h2>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-black italic uppercase">Mis Pedidos</h2>
+                <button onclick="clearHistory()" class="bg-red-500 text-white px-3 py-1 rounded-lg text-[10px] font-bold uppercase"><i class="fas fa-trash"></i> Borrar Todo</button>
+            </div>
             <div id="historyList" class="space-y-3"></div>
         </section>
     </main>
 
+    <div id="detailModal" class="fixed inset-0 bg-black/80 z-[4000] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl overflow-hidden relative shadow-2xl">
+            <button onclick="closeDetail()" class="absolute top-3 right-3 bg-white/90 rounded-full w-8 h-8 font-bold shadow-md">✕</button>
+            <img id="mImg" class="w-full h-72 object-cover bg-gray-200">
+            <div class="p-6">
+                <h2 id="mTitle" class="text-2xl font-black uppercase text-slate-800 mb-2"></h2>
+                <p id="mDesc" class="text-sm text-gray-600 mb-4 h-24 overflow-y-auto"></p>
+                <div class="flex justify-between items-center">
+                    <span id="mPrice" class="text-3xl font-black text-slate-900"></span>
+                    <button id="mBtn" class="bg-yellow-400 px-6 py-3 rounded-xl font-black uppercase text-sm shadow-md">Añadir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="cartModal" class="fixed right-0 top-0 h-full w-full md:w-80 bg-white shadow-2xl p-6 hidden z-[3000]">
         <div class="flex justify-between items-center mb-6 border-b pb-4 font-black italic">CARRITO <button onclick="toggleCart()" class="text-3xl">✕</button></div>
         <div id="cartItems" class="space-y-4 overflow-y-auto max-h-[60vh]"></div>
-        <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-gray-50">
+        <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-gray-50 text-center">
             <div id="totalContainer" class="text-xl font-black mb-4"></div>
-            <button onclick="sendOrder()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black flex items-center justify-center gap-2 uppercase italic text-sm">
-                <i class="fab fa-whatsapp"></i> ENVIAR PEDIDO POR WHATSAPP
+            <button onclick="sendOrder()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black flex items-center justify-center gap-2 uppercase">
+                <i class="fab fa-whatsapp"></i> ENVIAR A WHATSAPP
             </button>
         </div>
     </div>
@@ -109,35 +134,39 @@
         window.allProducts = [];
         let currentPass = "1234";
 
-        onSnapshot(configRef, (docSnap) => { if(docSnap.exists()) currentPass = docSnap.data().pass; });
+        onSnapshot(configRef, (s) => { if(s.exists()) currentPass = s.data().pass; });
 
         window.updateCloudPassword = async () => {
             const newP = document.getElementById('newAdminPass').value;
-            if(!newP) return alert("Escribe una clave");
+            if(!newP) return;
             await setDoc(configRef, { pass: newP }, { merge: true });
-            alert("Clave actualizada.");
+            alert("Nueva clave guardada.");
         };
 
-        window.accessAdmin = () => { if(prompt("Contraseña:") === currentPass) { document.getElementById('adminPanel').classList.remove('hidden'); toggleMenu(); } };
+        window.accessAdmin = () => { if(prompt("Acceso:") === currentPass) { document.getElementById('adminPanel').classList.remove('hidden'); toggleMenu(); } };
 
         onSnapshot(query(prodsRef, orderBy("timestamp", "desc")), (s) => {
             window.allProducts = [];
             s.forEach((d) => { window.allProducts.push({ id: d.id, ...d.data() }); });
-            renderLocalProducts();
-            renderAdminTable();
+            renderLocalProducts(); renderAdminTable();
         });
 
         window.saveToFirebase = async () => {
             const id = document.getElementById('editId').value;
-            const name = document.getElementById('prodName').value;
-            const price = document.getElementById('prodPrice').value;
-            const stock = parseInt(document.getElementById('prodStock').value) || 0;
+            const data = { 
+                name: document.getElementById('prodName').value,
+                price: document.getElementById('prodPrice').value,
+                currency: document.getElementById('prodCurrency').value,
+                stock: parseInt(document.getElementById('prodStock').value) || 0,
+                desc: document.getElementById('prodDesc').value,
+                timestamp: Date.now()
+            };
             const wa = document.getElementById('adminWhatsapp').value;
             const file = document.getElementById('prodFile').files[0];
             document.getElementById('saveLoader').style.display = 'block';
-            const run = async (img64) => {
-                const data = { name, price, currency: document.getElementById('prodCurrency').value, stock, timestamp: Date.now() };
-                if(img64) data.img = img64;
+
+            const run = async (img) => {
+                if(img) data.img = img;
                 if(id) await updateDoc(doc(db, "productos", id), data); else await addDoc(prodsRef, data);
                 if(wa) localStorage.setItem('global_wa', wa);
                 closeAdmin(); document.getElementById('saveLoader').style.display = 'none';
@@ -162,7 +191,8 @@
 
         function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
         function toggleCart() { document.getElementById('cartModal').classList.toggle('hidden'); }
-        
+        function closeDetail() { document.getElementById('detailModal').classList.add('hidden'); }
+
         function showView(v) {
             document.getElementById('catalogView').classList.toggle('hidden', v !== 'catalog');
             document.getElementById('historyView').classList.toggle('hidden', v !== 'history');
@@ -176,19 +206,34 @@
             grid.innerHTML = '';
             window.allProducts.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
                 const out = p.stock <= 0;
-                grid.innerHTML += `<div class="product-card flex flex-col shadow-sm border ${out?'grayscale opacity-60':''}">
+                grid.innerHTML += `<div class="product-card flex flex-col shadow-sm border ${out?'grayscale opacity-60':''}" onclick="openDetail('${p.id}')">
                     <img src="${p.img || 'https://via.placeholder.com/150'}" class="w-full h-40 object-cover">
                     <div class="p-3">
                         <h3 class="font-bold text-[10px] uppercase line-clamp-2 h-8">${p.name}</h3>
                         <p class="text-[10px] font-black ${out?'text-red-500':'text-green-600'}">${out?'AGOTADO':'STOCK: '+p.stock}</p>
-                        <p class="text-lg font-black mt-1">${p.currency}${p.price}</p>
-                        <button onclick="addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200 text-gray-400':'bg-yellow-400'}">AÑADIR</button>
+                        <p class="text-lg font-black mt-1 text-slate-900">${p.currency}${p.price}</p>
+                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200 text-gray-400':'bg-yellow-400 hover:bg-yellow-500'}">AÑADIR</button>
                     </div>
                 </div>`;
             });
         }
 
-        function addToCart(id) { const p = window.allProducts.find(x => x.id === id); cart.push({...p}); updateCartUI(); }
+        function openDetail(id) {
+            const p = window.allProducts.find(x => x.id === id);
+            document.getElementById('mTitle').innerText = p.name;
+            document.getElementById('mDesc').innerText = p.desc || "Sin descripción disponible.";
+            document.getElementById('mPrice').innerText = `${p.currency}${p.price}`;
+            document.getElementById('mImg').src = p.img || 'https://via.placeholder.com/300';
+            const btn = document.getElementById('mBtn');
+            const out = p.stock <= 0;
+            btn.disabled = out;
+            btn.innerText = out ? "AGOTADO" : "AÑADIR AL CARRITO";
+            btn.className = out ? "bg-gray-200 text-gray-400 px-6 py-3 rounded-xl font-black uppercase text-sm" : "bg-yellow-400 px-6 py-3 rounded-xl font-black uppercase text-sm shadow-md";
+            btn.onclick = () => { addToCart(p.id); closeDetail(); };
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function addToCart(id) { const p = window.allProducts.find(x => x.id === id); if(p.stock > 0) { cart.push({...p}); updateCartUI(); } }
 
         function updateCartUI() {
             document.getElementById('cartCount').innerText = cart.length;
@@ -202,17 +247,16 @@
 
         async function sendOrder() {
             const wa = localStorage.getItem('global_wa');
-            if(!wa) return alert("Falta el WhatsApp en Admin");
+            if(!wa || cart.length === 0) return alert("Verifica el número de WhatsApp o el Carrito.");
             const dir = document.getElementById('manualAddress').value;
             const total = document.getElementById('totalContainer').innerText;
             
-            // Guardar en Historial Local
-            const nuevoPedido = { fecha: new Date().toLocaleString(), total: total, resumen: cart.map(p => p.name).join(', ') };
-            historyData.unshift(nuevoPedido);
+            const nuevoP = { fecha: new Date().toLocaleString(), total: total, resumen: cart.map(p => p.name).join(', ') };
+            historyData.unshift(nuevoP);
             localStorage.setItem('global_history', JSON.stringify(historyData));
 
             await window.reduceStock(cart);
-            let txt = `🛍️ *PEDIDO GLOBAL*%0A%0A${cart.map(p => `• ${p.name}`).join('%0A')}%0A%0A*${total}*%0A`;
+            let txt = `🛍️ *NUEVO PEDIDO GLOBAL*%0A%0A${cart.map(p => `• ${p.name}`).join('%0A')}%0A%0A*${total}*%0A`;
             if(dir) txt += `%0A🏠 *Dir:* ${dir}`;
             
             window.open(`https://wa.me/${wa}?text=${txt}`, '_blank');
@@ -221,15 +265,13 @@
 
         function renderHistory() {
             const list = document.getElementById('historyList');
-            list.innerHTML = historyData.length === 0 ? '<p class="text-center text-gray-400 py-10">Aún no tienes pedidos.</p>' : '';
+            list.innerHTML = historyData.length === 0 ? '<p class="text-center text-gray-400 py-10">Historial vacío.</p>' : '';
             historyData.forEach(h => {
-                list.innerHTML += `<div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-yellow-500 mb-2">
-                    <p class="text-[8px] text-gray-400">${h.fecha}</p>
-                    <p class="text-xs font-bold uppercase">${h.resumen}</p>
-                    <p class="text-green-600 font-black">${h.total}</p>
-                </div>`;
+                list.innerHTML += `<div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-yellow-500"><p class="text-[8px] text-gray-400">${h.fecha}</p><p class="text-xs font-bold uppercase">${h.resumen}</p><p class="text-green-600 font-black">${h.total}</p></div>`;
             });
         }
+
+        function clearHistory() { if(confirm("¿Borrar todos los pedidos del historial?")) { historyData = []; localStorage.removeItem('global_history'); renderHistory(); } }
 
         function renderAdminTable() {
             const tb = document.getElementById('adminTableBody'); if(!tb) return; tb.innerHTML = '';
@@ -244,11 +286,12 @@
             document.getElementById('prodName').value = p.name;
             document.getElementById('prodPrice').value = p.price;
             document.getElementById('prodStock').value = p.stock;
+            document.getElementById('prodDesc').value = p.desc || "";
             document.getElementById('adminActionTitle').innerText = "Editando...";
             window.scrollTo(0,0);
         }
 
-        function closeAdmin() { document.getElementById('adminPanel').classList.add('hidden'); document.getElementById('editId').value = ""; }
+        function closeAdmin() { document.getElementById('adminPanel').classList.add('hidden'); document.getElementById('editId').value = ""; document.getElementById('prodDesc').value = ""; }
     </script>
 </body>
 </html>
