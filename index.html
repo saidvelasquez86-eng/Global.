@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLOBAL V0.5.1 | Cloud Security</title>
+    <title>GLOBAL V0.5.2 | Final Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -11,7 +11,7 @@
         #sideMenu { transition: 0.3s; left: -100%; z-index: 1000; }
         #sideMenu.active { left: 0; }
         .amazon-gradient { background: #131921; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #fbbf24; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: none; }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #fbbf24; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -24,11 +24,14 @@
         </div>
         <nav class="space-y-4 font-bold">
             <button onclick="showView('catalog')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3"><i class="fas fa-home text-yellow-500"></i> Inicio</button>
+            <button onclick="showView('history')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3"><i class="fas fa-history text-yellow-500"></i> Mi Historial</button>
+            
             <div class="mt-6 p-4 bg-slate-800 rounded-xl">
-                <p class="text-[10px] text-gray-400 uppercase mb-3">Entrega</p>
-                <label class="flex items-center gap-2 text-sm mb-3 cursor-pointer"><input type="checkbox" id="gpsToggle" checked class="accent-yellow-500"> Enviar GPS</label>
+                <p class="text-[10px] text-gray-400 uppercase mb-3">Opciones Delivery</p>
+                <label class="flex items-center gap-2 text-sm mb-3 cursor-pointer"><input type="checkbox" id="gpsToggle" checked class="accent-yellow-500"> Compartir GPS</label>
                 <textarea id="manualAddress" placeholder="Dirección exacta..." class="w-full bg-slate-700 text-white text-xs p-2 rounded-lg h-20 border-none outline-none"></textarea>
             </div>
+            
             <button onclick="accessAdmin()" class="w-full text-left p-3 text-red-400 mt-10 border-t border-gray-800 pt-6 flex items-center gap-3"><i class="fas fa-lock"></i> Panel Admin</button>
         </nav>
     </div>
@@ -42,45 +45,45 @@
                 <span id="cartCount" class="absolute -top-2 -right-2 bg-yellow-500 text-black font-black rounded-full px-1.5 text-[10px]">0</span>
             </div>
         </div>
-        <input type="text" id="searchInput" onkeyup="renderLocalProducts()" placeholder="Buscar productos..." class="w-full mt-3 p-2 rounded-lg text-black outline-none">
+        <input type="text" id="searchInput" onkeyup="renderLocalProducts()" placeholder="Buscar en la tienda..." class="w-full mt-3 p-2 rounded-lg text-black outline-none">
     </header>
 
     <main class="max-w-6xl mx-auto p-4">
         <section id="catalogView">
             <div id="adminPanel" class="hidden bg-white p-6 rounded-2xl shadow-xl mb-8 border-2 border-yellow-500">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 id="adminTitle" class="font-black text-lg uppercase">Gestión de Tienda</h2>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-black text-lg uppercase">Panel de Control</h2>
                     <button onclick="closeAdmin()" class="text-red-500 text-2xl">×</button>
                 </div>
 
-                <div class="mb-8 p-4 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                    <p class="text-[10px] font-black uppercase text-gray-500 mb-2">Seguridad del Panel</p>
+                <div class="mb-6 p-3 bg-gray-50 rounded-lg border">
+                    <p class="text-[9px] font-bold text-gray-500 uppercase mb-2">Seguridad del Panel</p>
                     <div class="flex gap-2">
-                        <input type="password" id="newAdminPass" placeholder="Nueva Contraseña" class="border p-2 rounded-lg text-sm w-full">
-                        <button onclick="updatePassword()" class="bg-blue-600 text-white px-4 rounded-lg text-[10px] font-bold uppercase">Actualizar Clave</button>
+                        <input type="password" id="newAdminPass" placeholder="Nueva Clave" class="border p-2 rounded w-full text-sm">
+                        <button onclick="updatePassword()" class="bg-blue-600 text-white px-3 rounded text-[9px] font-bold">ACTUALIZAR</button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4">
                     <input type="hidden" id="editId">
-                    <input type="text" id="prodName" placeholder="Nombre del producto" class="border p-3 rounded-lg">
-                    <textarea id="prodDesc" placeholder="Descripción detallada..." class="border p-3 rounded-lg md:col-span-2 h-20"></textarea>
+                    <input type="text" id="prodName" placeholder="Nombre Producto" class="border p-3 rounded-lg">
+                    <textarea id="prodDesc" placeholder="Descripción..." class="border p-3 rounded-lg h-20"></textarea>
                     <div class="flex gap-2">
                         <select id="prodCurrency" class="border p-3 rounded-lg"><option value="$">$ USD</option><option value="C$">C$ NIO</option></select>
                         <input type="number" id="prodPrice" placeholder="Precio" class="border p-3 rounded-lg w-full">
                     </div>
-                    <input type="number" id="prodStock" placeholder="Stock disponible" class="border p-3 rounded-lg w-full">
+                    <input type="number" id="prodStock" placeholder="Stock" class="border p-3 rounded-lg w-full">
                     <input type="file" id="prodFile" class="text-xs p-2 border rounded-lg w-full">
-                    <input type="text" id="adminWhatsapp" placeholder="WhatsApp Receptor (Ej: 50588888888)" class="border p-3 rounded-lg w-full bg-yellow-50">
-                    <button id="saveBtn" onclick="saveToFirebase()" class="md:col-span-2 bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase flex justify-center items-center gap-3">
-                        <span id="btnText">Subir Producto</span>
+                    <input type="text" id="adminWhatsapp" placeholder="WhatsApp (Ej: 50588888888)" class="border p-3 rounded-lg w-full bg-yellow-50">
+                    <button onclick="saveToFirebase()" class="bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase flex justify-center items-center gap-3">
+                        <span id="btnText">Guardar en la Nube</span>
                         <div id="saveLoader" class="loader"></div>
                     </button>
                 </div>
                 
-                <div class="mt-8 overflow-x-auto">
+                <div class="mt-6 overflow-x-auto">
                     <table class="w-full text-[10px] text-left border">
-                        <thead class="bg-gray-100"><tr><th class="p-2 border">Item</th><th class="p-2 border text-center">Stock</th><th class="p-2 border text-center">Acciones</th></tr></thead>
+                        <thead class="bg-gray-100"><tr><th class="p-2 border">Producto</th><th class="p-2 border">Acciones</th></tr></thead>
                         <tbody id="adminTableBody"></tbody>
                     </table>
                 </div>
@@ -88,15 +91,23 @@
             
             <div id="productGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
         </section>
+
+        <section id="historyView" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-black italic">MI HISTORIAL</h2>
+                <button onclick="clearHistory()" class="text-red-500 text-xs font-bold">BORRAR TODO</button>
+            </div>
+            <div id="historyList" class="space-y-3"></div>
+        </section>
     </main>
 
     <div id="productDetailModal" class="fixed inset-0 bg-black/80 z-[1100] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl">
-            <button onclick="closeDetail()" class="absolute top-3 right-3 bg-white rounded-full w-10 h-10 font-bold">✕</button>
+        <div class="bg-white w-full max-w-md rounded-2xl overflow-hidden relative shadow-2xl">
+            <button onclick="closeDetail()" class="absolute top-3 right-3 bg-white rounded-full w-8 h-8 font-bold">✕</button>
             <img id="detailImg" class="w-full h-64 object-cover">
             <div class="p-6">
-                <h2 id="detailTitle" class="text-2xl font-black uppercase mb-1"></h2>
-                <div id="detailPrice" class="text-2xl font-bold text-orange-600 mb-4"></div>
+                <h2 id="detailTitle" class="text-xl font-black uppercase mb-1"></h2>
+                <div id="detailPrice" class="text-xl font-bold text-orange-600 mb-4"></div>
                 <p id="detailFullDesc" class="text-gray-600 text-sm mb-6"></p>
                 <div id="detailActionBtn"></div>
             </div>
@@ -104,7 +115,7 @@
     </div>
 
     <div id="cartModal" class="fixed right-0 top-0 h-full w-full md:w-80 bg-white shadow-2xl p-6 hidden z-[1200]">
-        <div class="flex justify-between items-center mb-6 border-b pb-4"><h2 class="font-black italic">CARRITO</h2><button onclick="toggleCart()" class="text-3xl">×</button></div>
+        <div class="flex justify-between items-center mb-6 border-b pb-4"><h2 class="font-black">CARRITO</h2><button onclick="toggleCart()" class="text-3xl">×</button></div>
         <div id="cartItems" class="space-y-4 overflow-y-auto max-h-[60vh]"></div>
         <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-gray-50">
             <div id="totalContainer" class="text-xl font-black mb-4"></div>
@@ -116,7 +127,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, setDoc, getDoc } 
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, setDoc } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -136,32 +147,23 @@
         window.allProducts = [];
         let currentPass = "1234";
 
-        // Obtener Contraseña desde la nube
-        onSnapshot(configRef, (docSnap) => {
-            if(docSnap.exists()){ currentPass = docSnap.data().password; }
-        });
+        onSnapshot(configRef, (docSnap) => { if(docSnap.exists()){ currentPass = docSnap.data().password; } });
 
-        // Función para cambiar contraseña
         window.updatePassword = async function() {
             const newPass = document.getElementById('newAdminPass').value;
-            if(!newPass) return alert("Escribe una contraseña válida");
-            try {
-                await setDoc(configRef, { password: newPass });
-                alert("Contraseña actualizada en la nube");
-                document.getElementById('newAdminPass').value = "";
-            } catch (e) { alert("Error al cambiar clave"); }
+            if(!newPass) return;
+            await setDoc(configRef, { password: newPass });
+            alert("Contraseña actualizada");
+            document.getElementById('newAdminPass').value = "";
         }
 
-        // Acceso Admin
         window.accessAdmin = function() {
-            const pass = prompt("Contraseña de Administrador:");
-            if (pass === currentPass) {
+            if (prompt("Clave:") === currentPass) {
                 document.getElementById('adminPanel').classList.remove('hidden');
                 toggleMenu();
-            } else { alert("Clave Incorrecta"); }
+            } else { alert("Error"); }
         }
 
-        // Leer Productos
         onSnapshot(query(prodsRef, orderBy("timestamp", "desc")), (snapshot) => {
             window.allProducts = [];
             snapshot.forEach((doc) => { window.allProducts.push({ id: doc.id, ...doc.data() }); });
@@ -169,22 +171,21 @@
             renderAdminTable();
         });
 
-        // Guardar/Editar
         window.saveToFirebase = async function() {
             const id = document.getElementById('editId').value;
             const name = document.getElementById('prodName').value;
             const desc = document.getElementById('prodDesc').value;
-            const currency = document.getElementById('prodCurrency').value;
             const price = document.getElementById('prodPrice').value;
+            const currency = document.getElementById('prodCurrency').value;
             const stock = document.getElementById('prodStock').value;
             const fileInput = document.getElementById('prodFile');
             const wa = document.getElementById('adminWhatsapp').value;
 
-            if(!name || !price) return alert("Nombre y Precio requeridos");
+            if(!name || !price) return alert("Faltan datos");
             document.getElementById('saveLoader').style.display = 'block';
 
-            const process = async (img) => {
-                const data = { name, desc, currency, price, stock: stock===""?"inf":parseInt(stock), timestamp: Date.now() };
+            const runSave = async (img) => {
+                const data = { name, desc, price, currency, stock: stock===""?"inf":parseInt(stock), timestamp: Date.now() };
                 if(img) data.img = img;
                 if(id) await updateDoc(doc(db, "productos", id), data);
                 else await addDoc(prodsRef, data);
@@ -194,8 +195,8 @@
             };
 
             if (fileInput.files[0]) {
-                const r = new FileReader(); r.onload = (e) => process(e.target.result); r.readAsDataURL(fileInput.files[0]);
-            } else { process(null); }
+                const r = new FileReader(); r.onload = (e) => runSave(e.target.result); r.readAsDataURL(fileInput.files[0]);
+            } else { runSave(null); }
         }
 
         window.deleteFromFirebase = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "productos", id)); }
@@ -203,9 +204,16 @@
 
     <script>
         let cart = [];
+        let history = JSON.parse(localStorage.getItem('global_history')) || [];
+
         function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
         function toggleCart() { document.getElementById('cartModal').classList.toggle('hidden'); }
-        function showView(view) { document.getElementById('catalogView').classList.toggle('hidden', view !== 'catalog'); toggleMenu(); }
+        function showView(view) {
+            document.getElementById('catalogView').classList.toggle('hidden', view !== 'catalog');
+            document.getElementById('historyView').classList.toggle('hidden', view !== 'history');
+            if(view === 'history') renderHistory();
+            toggleMenu();
+        }
 
         function renderLocalProducts() {
             const grid = document.getElementById('productGrid');
@@ -213,15 +221,7 @@
             grid.innerHTML = '';
             window.allProducts.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
                 const isAgotado = (p.stock !== "inf" && p.stock <= 0);
-                grid.innerHTML += `
-                    <div class="product-card flex flex-col shadow-sm">
-                        <img src="${p.img || 'https://via.placeholder.com/150'}" class="w-full h-36 object-cover cursor-pointer" onclick="openDetail('${p.id}')">
-                        <div class="p-3">
-                            <h3 class="font-bold text-[10px] uppercase line-clamp-2 h-8">${p.name}</h3>
-                            <p class="text-lg font-black mt-1">${p.currency}${p.price}</p>
-                            <button onclick="addToCart('${p.id}')" ${isAgotado?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-bold text-[10px] uppercase ${isAgotado?'bg-gray-100 text-gray-400':'bg-yellow-400'}">${isAgotado?'AGOTADO':'AÑADIR'}</button>
-                        </div>
-                    </div>`;
+                grid.innerHTML += `<div class="product-card flex flex-col"><img src="${p.img || 'https://via.placeholder.com/150'}" class="w-full h-36 object-cover cursor-pointer" onclick="openDetail('${p.id}')"><div class="p-3"><h3 class="font-bold text-[10px] uppercase line-clamp-2">${p.name}</h3><p class="text-lg font-black mt-1">${p.currency}${p.price}</p><button onclick="addToCart('${p.id}')" ${isAgotado?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-bold text-[10px] uppercase ${isAgotado?'bg-gray-100':'bg-yellow-400'}">${isAgotado?'AGOTADO':'AÑADIR'}</button></div></div>`;
             });
         }
 
@@ -231,7 +231,7 @@
             document.getElementById('detailImg').src = p.img || 'https://via.placeholder.com/300';
             document.getElementById('detailFullDesc').innerText = p.desc;
             document.getElementById('detailPrice').innerText = `${p.currency}${p.price}`;
-            document.getElementById('detailActionBtn').innerHTML = `<button onclick="addToCart('${p.id}')" class="w-full py-4 rounded-xl font-black bg-yellow-400 shadow-lg">AÑADIR A LA BOLSA</button>`;
+            document.getElementById('detailActionBtn').innerHTML = `<button onclick="addToCart('${p.id}')" class="w-full py-4 rounded-xl font-black bg-yellow-400">AÑADIR AL CARRITO</button>`;
             document.getElementById('productDetailModal').classList.remove('hidden');
         }
 
@@ -252,7 +252,7 @@
             let tUSD = 0, tNIO = 0;
             cart.forEach((item, i) => {
                 if(item.currency === "$") tUSD += parseFloat(item.price); else tNIO += parseFloat(item.price);
-                list.innerHTML += `<div class="flex justify-between items-center text-[10px] font-bold uppercase border-b pb-2"><span>${item.name}</span><button onclick="removeFromCart(${i})" class="text-red-500">✕</button></div>`;
+                list.innerHTML += `<div class="flex justify-between text-[10px] uppercase border-b pb-2"><span>${item.name}</span><button onclick="removeFromCart(${i})" class="text-red-500">✕</button></div>`;
             });
             document.getElementById('totalContainer').innerText = (tUSD > 0 ? `$${tUSD.toFixed(2)} ` : '') + (tNIO > 0 ? `C$${tNIO.toFixed(2)}` : '');
         }
@@ -269,18 +269,37 @@
 
         function finalize(lat, lon, dir) {
             const wa = localStorage.getItem('global_wa');
-            let msg = `🛍️ *PEDIDO GLOBAL*%0A${cart.map(i => i.name).join('%0A')}%0A%0A*TOTAL: ${document.getElementById('totalContainer').innerText}*%0A`;
+            const total = document.getElementById('totalContainer').innerText;
+            const itemsNames = cart.map(i => i.name).join(', ');
+            
+            // Guardar Historial
+            const pedido = { fecha: new Date().toLocaleString(), items: itemsNames, total: total };
+            history.unshift(pedido);
+            localStorage.setItem('global_history', JSON.stringify(history));
+
+            let msg = `🛍️ *PEDIDO GLOBAL*%0A${itemsNames}%0A%0A*TOTAL: ${total}*%0A`;
             if(dir) msg += `%0A🏠 *Dirección:* ${dir}`;
             if(lat) msg += `%0A📍 *GPS:* https://www.google.com/maps?q=${lat},${lon}`;
             window.open(`https://wa.me/${wa}?text=${msg}`, '_blank');
+            cart = []; updateCartUI(); toggleCart();
         }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = history.length === 0 ? '<p class="text-gray-400 text-center py-10">Sin pedidos.</p>' : '';
+            history.forEach(h => {
+                list.innerHTML += `<div class="bg-white p-3 rounded-lg border-l-4 border-slate-900 shadow-sm"><p class="text-[8px] text-gray-400 italic">${h.fecha}</p><p class="text-xs font-bold uppercase">${h.items}</p><p class="text-green-600 font-black text-sm">${h.total}</p></div>`;
+            });
+        }
+
+        function clearHistory() { if(confirm("¿Borrar historial local?")) { history = []; localStorage.setItem('global_history', JSON.stringify(history)); renderHistory(); } }
 
         function renderAdminTable() {
             const tb = document.getElementById('adminTableBody');
             if(!tb) return;
             tb.innerHTML = '';
             window.allProducts.forEach(p => {
-                tb.innerHTML += `<tr class="border-b"><td class="p-2">${p.name}</td><td class="p-2 text-center">${p.stock}</td><td class="p-2 text-center"><button onclick="editProduct('${p.id}')" class="text-blue-500 mr-2"><i class="fas fa-edit"></i></button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500"><i class="fas fa-trash"></i></button></td></tr>`;
+                tb.innerHTML += `<tr class="border-b"><td class="p-2">${p.name}</td><td class="p-2 text-center"><button onclick="editProduct('${p.id}')" class="text-blue-500 mr-2"><i class="fas fa-edit"></i></button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500"><i class="fas fa-trash"></i></button></td></tr>`;
             });
         }
 
@@ -291,7 +310,6 @@
             document.getElementById('prodDesc').value = p.desc;
             document.getElementById('prodPrice').value = p.price;
             document.getElementById('prodStock').value = p.stock;
-            document.getElementById('adminTitle').innerText = "Editando Producto";
         }
     </script>
 </body>
