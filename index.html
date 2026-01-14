@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLOBAL V0.6.0 | Final Edition</title>
+    <title>GLOBAL V0.6.1 | Multi-Moneda</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="relative w-full">
-                <input type="text" id="searchInput" onkeyup="renderLocalProducts()" placeholder="Buscar productos..." class="w-full p-2.5 pl-10 rounded-lg text-black outline-none shadow-md">
+                <input type="text" id="searchInput" onkeyup="renderLocalProducts()" placeholder="¿Qué buscas hoy?" class="w-full p-2.5 pl-10 rounded-lg text-black outline-none shadow-md">
                 <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
             </div>
         </div>
@@ -51,24 +51,27 @@
     <main class="max-w-6xl mx-auto p-4">
         <section id="catalogView">
             <div id="adminPanel" class="hidden bg-white p-6 rounded-2xl shadow-xl mb-8 border-2 border-yellow-500">
-                <div class="flex justify-between items-center mb-4"><h2 class="font-black italic uppercase">Admin Store</h2><button onclick="closeAdmin()" class="text-red-500 text-2xl">✕</button></div>
+                <div class="flex justify-between items-center mb-4"><h2 id="adminActionTitle" class="font-black italic uppercase">Agregar Producto</h2><button onclick="closeAdmin()" class="text-red-500 text-2xl">✕</button></div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="hidden" id="editId">
                     <input type="text" id="prodName" placeholder="Nombre" class="border p-3 rounded-lg w-full">
                     <div class="flex gap-2">
                         <input type="number" id="prodPrice" placeholder="Precio" class="border p-3 rounded-lg w-full">
-                        <select id="prodCurrency" class="border p-3 rounded-lg"><option value="$">$ USD</option><option value="C$">C$ NIO</option></select>
+                        <select id="prodCurrency" class="border p-3 rounded-lg bg-gray-50 font-bold">
+                            <option value="C$">C$ NIO</option>
+                            <option value="$">$ USD</option>
+                        </select>
                     </div>
                     <input type="number" id="prodStock" placeholder="Stock" class="border p-3 rounded-lg w-full">
-                    <input type="text" id="adminWhatsapp" placeholder="WhatsApp Receptor" class="border p-3 rounded-lg w-full bg-yellow-50">
+                    <input type="text" id="adminWhatsapp" placeholder="WhatsApp Receptor (Ej: 505...)" class="border p-3 rounded-lg w-full bg-yellow-50">
                     <textarea id="prodDesc" placeholder="Descripción del producto..." class="border p-3 rounded-lg w-full md:col-span-2"></textarea>
                     <input type="file" id="prodFile" class="text-xs w-full">
                     <button onclick="saveToFirebase()" class="md:col-span-2 bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase flex justify-center items-center gap-3">
-                        <span id="saveBtnText">GUARDAR</span><div id="saveLoader" class="loader"></div>
+                        <span id="saveBtnText">GUARDAR EN LA NUBE</span><div id="saveLoader" class="loader"></div>
                     </button>
                     <div class="md:col-span-2 p-3 bg-gray-100 rounded-lg flex gap-2">
-                        <input type="text" id="newAdminPass" placeholder="Nueva Clave Admin" class="border p-2 rounded-lg w-full text-xs">
+                        <input type="text" id="newAdminPass" placeholder="Cambiar Clave" class="border p-2 rounded-lg w-full text-xs">
                         <button onclick="updateCloudPassword()" class="bg-blue-600 text-white px-4 rounded-lg text-[10px] font-bold">ACTUALIZAR CLAVE</button>
                     </div>
                 </div>
@@ -80,7 +83,7 @@
         <section id="historyView" class="hidden">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-black italic uppercase">Mis Pedidos</h2>
-                <button onclick="clearHistory()" class="bg-red-500 text-white px-3 py-1 rounded-lg text-[10px] font-bold uppercase"><i class="fas fa-trash"></i> Borrar Todo</button>
+                <button onclick="clearHistory()" class="bg-red-500 text-white px-3 py-1 rounded-lg text-[10px] font-bold uppercase">Borrar Historial</button>
             </div>
             <div id="historyList" class="space-y-3"></div>
         </section>
@@ -107,7 +110,7 @@
         <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-gray-50 text-center">
             <div id="totalContainer" class="text-xl font-black mb-4"></div>
             <button onclick="sendOrder()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black flex items-center justify-center gap-2 uppercase">
-                <i class="fab fa-whatsapp"></i> ENVIAR A WHATSAPP
+                <i class="fab fa-whatsapp"></i> ENVIAR PEDIDO
             </button>
         </div>
     </div>
@@ -140,7 +143,7 @@
             const newP = document.getElementById('newAdminPass').value;
             if(!newP) return;
             await setDoc(configRef, { pass: newP }, { merge: true });
-            alert("Nueva clave guardada.");
+            alert("Clave actualizada.");
         };
 
         window.accessAdmin = () => { if(prompt("Acceso:") === currentPass) { document.getElementById('adminPanel').classList.remove('hidden'); toggleMenu(); } };
@@ -156,7 +159,7 @@
             const data = { 
                 name: document.getElementById('prodName').value,
                 price: document.getElementById('prodPrice').value,
-                currency: document.getElementById('prodCurrency').value,
+                currency: document.getElementById('prodCurrency').value, // AQUÍ SE GUARDA C$ O $
                 stock: parseInt(document.getElementById('prodStock').value) || 0,
                 desc: document.getElementById('prodDesc').value,
                 timestamp: Date.now()
@@ -212,7 +215,7 @@
                         <h3 class="font-bold text-[10px] uppercase line-clamp-2 h-8">${p.name}</h3>
                         <p class="text-[10px] font-black ${out?'text-red-500':'text-green-600'}">${out?'AGOTADO':'STOCK: '+p.stock}</p>
                         <p class="text-lg font-black mt-1 text-slate-900">${p.currency}${p.price}</p>
-                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200 text-gray-400':'bg-yellow-400 hover:bg-yellow-500'}">AÑADIR</button>
+                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200 text-gray-400':'bg-yellow-400'}">AÑADIR</button>
                     </div>
                 </div>`;
             });
@@ -221,14 +224,13 @@
         function openDetail(id) {
             const p = window.allProducts.find(x => x.id === id);
             document.getElementById('mTitle').innerText = p.name;
-            document.getElementById('mDesc').innerText = p.desc || "Sin descripción disponible.";
+            document.getElementById('mDesc').innerText = p.desc || "Sin descripción.";
             document.getElementById('mPrice').innerText = `${p.currency}${p.price}`;
             document.getElementById('mImg').src = p.img || 'https://via.placeholder.com/300';
             const btn = document.getElementById('mBtn');
             const out = p.stock <= 0;
             btn.disabled = out;
             btn.innerText = out ? "AGOTADO" : "AÑADIR AL CARRITO";
-            btn.className = out ? "bg-gray-200 text-gray-400 px-6 py-3 rounded-xl font-black uppercase text-sm" : "bg-yellow-400 px-6 py-3 rounded-xl font-black uppercase text-sm shadow-md";
             btn.onclick = () => { addToCart(p.id); closeDetail(); };
             document.getElementById('detailModal').classList.remove('hidden');
         }
@@ -238,16 +240,23 @@
         function updateCartUI() {
             document.getElementById('cartCount').innerText = cart.length;
             const items = document.getElementById('cartItems'); items.innerHTML = '';
-            let total = 0, curr = "";
-            cart.forEach((p, i) => { total += parseFloat(p.price); curr = p.currency; items.innerHTML += `<div class="flex justify-between items-center text-[10px] border-b pb-2"><span>${p.name}</span><button onclick="removeFromCart(${i})" class="text-red-500 font-bold">✕</button></div>`; });
-            document.getElementById('totalContainer').innerText = `TOTAL: ${curr}${total.toFixed(2)}`;
+            let resumenTotal = {}; // Agrupar por moneda
+            cart.forEach((p, i) => { 
+                resumenTotal[p.currency] = (resumenTotal[p.currency] || 0) + parseFloat(p.price);
+                items.innerHTML += `<div class="flex justify-between items-center text-[10px] border-b pb-2"><span>${p.name}</span><button onclick="removeFromCart(${i})" class="text-red-500 font-bold">✕</button></div>`; 
+            });
+            
+            // Mostrar total combinado si hay varias monedas
+            let totalTxt = "";
+            for (const key in resumenTotal) { totalTxt += `${key}${resumenTotal[key].toFixed(2)} `; }
+            document.getElementById('totalContainer').innerText = `TOTAL: ${totalTxt}`;
         }
 
         function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
 
         async function sendOrder() {
             const wa = localStorage.getItem('global_wa');
-            if(!wa || cart.length === 0) return alert("Verifica el número de WhatsApp o el Carrito.");
+            if(!wa || cart.length === 0) return alert("Error en Carrito o WhatsApp.");
             const dir = document.getElementById('manualAddress').value;
             const total = document.getElementById('totalContainer').innerText;
             
@@ -256,7 +265,7 @@
             localStorage.setItem('global_history', JSON.stringify(historyData));
 
             await window.reduceStock(cart);
-            let txt = `🛍️ *NUEVO PEDIDO GLOBAL*%0A%0A${cart.map(p => `• ${p.name}`).join('%0A')}%0A%0A*${total}*%0A`;
+            let txt = `🛍️ *PEDIDO GLOBAL*%0A%0A${cart.map(p => `• ${p.name} (${p.currency}${p.price})`).join('%0A')}%0A%0A*${total}*%0A`;
             if(dir) txt += `%0A🏠 *Dir:* ${dir}`;
             
             window.open(`https://wa.me/${wa}?text=${txt}`, '_blank');
@@ -265,18 +274,18 @@
 
         function renderHistory() {
             const list = document.getElementById('historyList');
-            list.innerHTML = historyData.length === 0 ? '<p class="text-center text-gray-400 py-10">Historial vacío.</p>' : '';
+            list.innerHTML = historyData.length === 0 ? '<p class="text-center text-gray-400 py-10">Sin historial.</p>' : '';
             historyData.forEach(h => {
                 list.innerHTML += `<div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-yellow-500"><p class="text-[8px] text-gray-400">${h.fecha}</p><p class="text-xs font-bold uppercase">${h.resumen}</p><p class="text-green-600 font-black">${h.total}</p></div>`;
             });
         }
 
-        function clearHistory() { if(confirm("¿Borrar todos los pedidos del historial?")) { historyData = []; localStorage.removeItem('global_history'); renderHistory(); } }
+        function clearHistory() { if(confirm("¿Borrar historial?")) { historyData = []; localStorage.removeItem('global_history'); renderHistory(); } }
 
         function renderAdminTable() {
             const tb = document.getElementById('adminTableBody'); if(!tb) return; tb.innerHTML = '';
             window.allProducts.forEach(p => {
-                tb.innerHTML += `<tr class="border-b"><td class="p-2">${p.name} (${p.stock})</td><td class="p-2 flex gap-3"><button onclick="loadToEdit('${p.id}')" class="text-blue-600 font-bold">Edit</button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500 font-bold">X</button></td></tr>`;
+                tb.innerHTML += `<tr class="border-b"><td class="p-2">${p.name} (${p.currency}${p.price})</td><td class="p-2 flex gap-3"><button onclick="loadToEdit('${p.id}')" class="text-blue-600 font-bold">Edit</button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500 font-bold">X</button></td></tr>`;
             });
         }
 
@@ -285,13 +294,18 @@
             document.getElementById('editId').value = p.id;
             document.getElementById('prodName').value = p.name;
             document.getElementById('prodPrice').value = p.price;
+            document.getElementById('prodCurrency').value = p.currency;
             document.getElementById('prodStock').value = p.stock;
             document.getElementById('prodDesc').value = p.desc || "";
-            document.getElementById('adminActionTitle').innerText = "Editando...";
+            document.getElementById('adminActionTitle').innerText = "Editando Producto";
             window.scrollTo(0,0);
         }
 
-        function closeAdmin() { document.getElementById('adminPanel').classList.add('hidden'); document.getElementById('editId').value = ""; document.getElementById('prodDesc').value = ""; }
+        function closeAdmin() { 
+            document.getElementById('adminPanel').classList.add('hidden'); 
+            document.getElementById('editId').value = ""; 
+            document.getElementById('adminActionTitle').innerText = "Agregar Producto";
+        }
     </script>
 </body>
 </html>
