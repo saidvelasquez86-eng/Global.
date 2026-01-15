@@ -3,19 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLOBAL V0.6.1 | Multi-Moneda</title>
+    <title>GLOBAL V0.6.1 | Tienda Real</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* AJUSTE DE IMÁGENES: Se ajustan solas sin cortarse */
-        .product-card img {
-            width: 100%;
-            height: 180px;
-            object-fit: contain; 
-            background-color: #f9fafb;
-            padding: 10px;
-        }
-        .product-card { border: 1px solid #eee; transition: 0.2s; background: white; border-radius: 15px; overflow: hidden; cursor: pointer; }
+        .product-card img { width: 100%; height: 180px; object-fit: contain; background: #f9fafb; padding: 10px; }
+        .product-card { border: 1px solid #eee; transition: 0.2s; background: white; border-radius: 15px; overflow: hidden; }
         #sideMenu { transition: 0.3s; left: -100%; z-index: 1000; }
         #sideMenu.active { left: 0; }
         .amazon-gradient { background: #131921; }
@@ -29,76 +22,73 @@
         <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4 text-yellow-500 font-black text-2xl italic">GLOBAL <button onclick="toggleMenu()" class="text-white text-3xl">×</button></div>
         <nav class="space-y-4 font-bold">
             <button onclick="showView('catalog')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3"><i class="fas fa-home text-yellow-500"></i> Inicio</button>
-            <button onclick="showView('history')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3"><i class="fas fa-history text-yellow-500"></i> Mi Historial</button>
-            <div class="mt-6 p-4 bg-slate-800 rounded-xl text-xs">
-                <p class="text-gray-400 uppercase mb-2 italic font-black">Mis Datos</p>
-                <textarea id="manualAddress" placeholder="Escribe tu dirección aquí..." class="w-full bg-slate-700 text-white p-2 rounded-lg h-20 outline-none"></textarea>
+            <button onclick="showView('history')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3"><i class="fas fa-history text-yellow-500"></i> Mis Pedidos</button>
+            <div class="mt-6 p-4 bg-slate-800 rounded-xl">
+                <p class="text-gray-400 text-[10px] uppercase mb-2">Tu Dirección</p>
+                <textarea id="manualAddress" placeholder="Barrio, calle, casa..." class="w-full bg-slate-700 text-white p-2 rounded text-sm h-16 outline-none"></textarea>
             </div>
             <button onclick="accessAdmin()" class="w-full text-left p-3 text-red-400 mt-10 border-t border-gray-800 pt-6 flex items-center gap-3"><i class="fas fa-lock"></i> Panel Admin</button>
         </nav>
     </div>
 
     <header class="amazon-gradient text-white sticky top-0 z-50 p-4">
-        <div class="max-w-6xl mx-auto flex flex-col gap-3">
-            <div class="flex justify-between items-center">
-                <button onclick="toggleMenu()" class="text-2xl"><i class="fas fa-bars"></i></button>
-                <h1 class="text-2xl font-black text-yellow-500 italic">GLOBAL</h1>
-                <div onclick="toggleCart()" class="relative cursor-pointer">
-                    <i class="fas fa-shopping-cart text-2xl"></i>
-                    <span id="cartCount" class="absolute -top-2 -right-2 bg-yellow-500 text-black font-black rounded-full px-1.5 text-[10px]">0</span>
-                </div>
-            </div>
-            <div class="relative w-full">
-                <input type="text" id="searchInput" onkeyup="renderLocalProducts()" placeholder="¿Qué buscas hoy?" class="w-full p-2.5 pl-10 rounded-lg text-black outline-none shadow-md">
-                <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
+        <div class="max-w-6xl mx-auto flex justify-between items-center mb-2">
+            <button onclick="toggleMenu()" class="text-2xl"><i class="fas fa-bars"></i></button>
+            <h1 class="text-2xl font-black text-yellow-500 italic">GLOBAL</h1>
+            <div onclick="toggleCart()" class="relative cursor-pointer">
+                <i class="fas fa-shopping-cart text-2xl"></i>
+                <span id="cartCount" class="absolute -top-2 -right-2 bg-yellow-500 text-black font-black rounded-full px-1.5 text-[10px]">0</span>
             </div>
         </div>
+        <input type="text" id="searchInput" onkeyup="renderLocalProducts()" placeholder="Busca un producto..." class="w-full p-2.5 rounded-lg text-black outline-none">
     </header>
 
     <main class="max-w-6xl mx-auto p-4">
         <section id="catalogView">
             <div id="adminPanel" class="hidden bg-white p-6 rounded-2xl shadow-xl mb-8 border-2 border-yellow-500">
-                <div class="flex justify-between items-center mb-4"><h2 id="adminActionTitle" class="font-black italic uppercase">Gestión de Producto</h2><button onclick="closeAdmin()" class="text-red-500 text-2xl">✕</button></div>
+                <div class="flex justify-between items-center mb-4"><h2 class="font-black uppercase">Panel de Control</h2><button onclick="closeAdmin()" class="text-red-500">✕</button></div>
+                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                        <label class="block text-[10px] font-bold mb-1">WHATSAPP DE VENTAS (SIN EL +):</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="globalWhatsAppInput" placeholder="Ej: 50588888888" class="border p-2 rounded w-full font-bold">
+                            <button onclick="updateGlobalWhatsApp()" class="bg-blue-600 text-white px-4 rounded text-[10px] font-bold">ACTUALIZAR</button>
+                        </div>
+                    </div>
+
                     <input type="hidden" id="editId">
-                    <input type="text" id="prodName" placeholder="Nombre" class="border p-3 rounded-lg w-full">
+                    <input type="text" id="prodName" placeholder="Nombre Producto" class="border p-3 rounded-lg w-full">
                     <div class="flex gap-2">
                         <input type="number" id="prodPrice" placeholder="Precio" class="border p-3 rounded-lg w-full">
-                        <select id="prodCurrency" class="border p-3 rounded-lg font-bold">
-                            <option value="C$">C$ NIO</option>
-                            <option value="$">$ USD</option>
-                        </select>
+                        <select id="prodCurrency" class="border p-3 rounded-lg"><option value="C$">C$</option><option value="$">$</option></select>
                     </div>
                     <input type="number" id="prodStock" placeholder="Stock" class="border p-3 rounded-lg w-full">
-                    <input type="text" id="adminWhatsapp" placeholder="WhatsApp (Ej: 50588888888)" class="border p-3 rounded-lg w-full bg-yellow-50">
-                    <textarea id="prodDesc" placeholder="Descripción..." class="border p-3 rounded-lg w-full md:col-span-2"></textarea>
-                    <input type="file" id="prodFile" class="text-xs w-full">
-                    <button onclick="saveToFirebase()" class="md:col-span-2 bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase flex justify-center items-center gap-3">
-                        <span id="saveBtnText">GUARDAR PRODUCTO</span><div id="saveLoader" class="loader"></div>
-                    </button>
+                    <textarea id="prodDesc" placeholder="Descripción" class="border p-3 rounded-lg w-full md:col-span-2"></textarea>
+                    <input type="file" id="prodFile" class="text-xs">
+                    <button onclick="saveToFirebase()" class="md:col-span-2 bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase">GUARDAR PRODUCTO</button>
                 </div>
-                <div class="mt-8 overflow-x-auto"><table class="w-full text-[11px] text-left"><tbody id="adminTableBody"></tbody></table></div>
+                <div class="mt-6 overflow-x-auto"><table class="w-full text-[11px]"><tbody id="adminTableBody"></tbody></table></div>
             </div>
-
             <div id="productGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
         </section>
 
         <section id="historyView" class="hidden">
-            <h2 class="text-xl font-black italic uppercase mb-6">Mis Pedidos Pasados</h2>
+            <h2 class="text-xl font-black italic mb-4">MIS COMPRAS</h2>
             <div id="historyList" class="space-y-3"></div>
         </section>
     </main>
 
     <div id="detailModal" class="fixed inset-0 bg-black/80 z-[4000] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl overflow-hidden relative">
-            <button onclick="closeDetail()" class="absolute top-3 right-3 bg-white rounded-full w-8 h-8 font-bold shadow">✕</button>
-            <img id="mImg" class="w-full h-64 object-contain bg-gray-100">
+        <div class="bg-white w-full max-w-md rounded-2xl overflow-hidden relative shadow-2xl">
+            <button onclick="closeDetail()" class="absolute top-3 right-3 bg-white rounded-full w-8 h-8 font-bold">✕</button>
+            <img id="mImg" class="w-full h-72 object-contain bg-gray-50">
             <div class="p-6">
-                <h2 id="mTitle" class="text-xl font-black uppercase mb-2"></h2>
-                <p id="mDesc" class="text-sm text-gray-500 mb-4 h-20 overflow-y-auto"></p>
+                <h2 id="mTitle" class="text-xl font-black uppercase mb-1"></h2>
+                <p id="mDesc" class="text-sm text-gray-500 mb-4"></p>
                 <div class="flex justify-between items-center">
-                    <span id="mPrice" class="text-2xl font-black text-slate-900"></span>
-                    <button id="mBtn" class="bg-yellow-400 px-6 py-3 rounded-xl font-black uppercase text-xs">Añadir</button>
+                    <span id="mPrice" class="text-2xl font-black"></span>
+                    <button id="mBtn" class="bg-yellow-400 px-6 py-2 rounded-lg font-black text-sm">AÑADIR</button>
                 </div>
             </div>
         </div>
@@ -106,19 +96,16 @@
 
     <div id="cartModal" class="fixed right-0 top-0 h-full w-full md:w-80 bg-white shadow-2xl p-6 hidden z-[3000]">
         <div class="flex justify-between items-center mb-6 border-b pb-4 font-black">CARRITO <button onclick="toggleCart()" class="text-3xl">✕</button></div>
-        <div id="cartItems" class="space-y-4 overflow-y-auto max-h-[60vh]"></div>
-        <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-gray-50 text-center">
-            <div id="totalContainer" class="text-xl font-black mb-4">TOTAL: 0</div>
-            <button onclick="sendOrder()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black flex items-center justify-center gap-2">
-                <i class="fab fa-whatsapp"></i> ENVIAR PEDIDO POR WHATSAPP
-            </button>
+        <div id="cartItems" class="space-y-4 overflow-y-auto h-[60vh]"></div>
+        <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-white shadow-inner">
+            <div id="totalContainer" class="text-xl font-black mb-4 text-center">TOTAL: 0</div>
+            <button onclick="sendOrder()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black">ENVIAR PEDIDO A WHATSAPP</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, setDoc, getDoc } 
-        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDFEw-S5KufBqeofyEqqnjCxbU7ElcqS2k",
@@ -135,11 +122,26 @@
         const configRef = doc(db, "configuracion", "seguridad");
 
         window.allProducts = [];
+        window.currentWhatsApp = ""; 
+
+        // Escuchar el número de WhatsApp desde Firebase (Para que todos lo tengan)
+        onSnapshot(configRef, (s) => {
+            if(s.exists()){
+                window.currentWhatsApp = s.data().whatsapp || "";
+                document.getElementById('globalWhatsAppInput').value = window.currentWhatsApp;
+                currentPass = s.data().pass || "1234";
+            }
+        });
+
+        window.updateGlobalWhatsApp = async () => {
+            const num = document.getElementById('globalWhatsAppInput').value.replace(/\D/g,'');
+            if(!num) return alert("Pon un número");
+            await setDoc(configRef, { whatsapp: num }, { merge: true });
+            alert("Número de ventas actualizado para todos los clientes.");
+        };
+
         let currentPass = "1234";
-
-        onSnapshot(configRef, (s) => { if(s.exists()) currentPass = s.data().pass; });
-
-        window.accessAdmin = () => { if(prompt("Pass:") === currentPass) { document.getElementById('adminPanel').classList.remove('hidden'); toggleMenu(); } };
+        window.accessAdmin = () => { if(prompt("Contraseña:") === currentPass) { document.getElementById('adminPanel').classList.remove('hidden'); toggleMenu(); } };
 
         onSnapshot(query(prodsRef, orderBy("timestamp", "desc")), (s) => {
             window.allProducts = [];
@@ -149,9 +151,6 @@
 
         window.saveToFirebase = async () => {
             const id = document.getElementById('editId').value;
-            const waField = document.getElementById('adminWhatsapp').value;
-            if(waField) localStorage.setItem('global_wa', waField.replace(/\D/g,''));
-
             const data = { 
                 name: document.getElementById('prodName').value,
                 price: document.getElementById('prodPrice').value,
@@ -160,14 +159,11 @@
                 desc: document.getElementById('prodDesc').value,
                 timestamp: Date.now()
             };
-            
             const file = document.getElementById('prodFile').files[0];
-            document.getElementById('saveLoader').style.display = 'block';
-
             const run = async (img) => {
                 if(img) data.img = img;
                 if(id) await updateDoc(doc(db, "productos", id), data); else await addDoc(prodsRef, data);
-                closeAdmin(); document.getElementById('saveLoader').style.display = 'none';
+                closeAdmin();
             };
             if(file) { const r = new FileReader(); r.onload = (e) => run(e.target.result); r.readAsDataURL(file); } else run(null);
         };
@@ -205,13 +201,13 @@
             window.allProducts.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
                 const out = p.stock <= 0;
                 grid.innerHTML += `
-                <div class="product-card" onclick="openDetail('${p.id}')">
+                <div class="product-card shadow-sm" onclick="openDetail('${p.id}')">
                     <img src="${p.img || 'https://via.placeholder.com/150'}">
                     <div class="p-3">
-                        <h3 class="font-bold text-[11px] uppercase line-clamp-2 h-8">${p.name}</h3>
-                        <p class="text-[10px] font-black ${out?'text-red-500':'text-green-600'}">${out?'AGOTADO':'STOCK: '+p.stock}</p>
+                        <h3 class="font-bold text-[11px] uppercase h-8 line-clamp-2">${p.name}</h3>
+                        <p class="text-[10px] ${out?'text-red-500':'text-green-600'} font-bold">${out?'AGOTADO':'STOCK: '+p.stock}</p>
                         <p class="text-lg font-black text-slate-900">${p.currency}${p.price}</p>
-                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200':'bg-yellow-400'}">AÑADIR</button>
+                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200 text-gray-400':'bg-yellow-400'}">AÑADIR</button>
                     </div>
                 </div>`;
             });
@@ -237,69 +233,52 @@
         function updateCartUI() {
             document.getElementById('cartCount').innerText = cart.length;
             const items = document.getElementById('cartItems'); items.innerHTML = '';
-            let resumenTotal = {}; 
-            cart.forEach((p, i) => { 
-                resumenTotal[p.currency] = (resumenTotal[p.currency] || 0) + parseFloat(p.price);
-                items.innerHTML += `<div class="flex justify-between text-xs bg-gray-50 p-2 rounded"><span>${p.name}</span><button onclick="removeFromCart(${i})" class="text-red-500 font-bold">✕</button></div>`; 
+            let t = {}; cart.forEach((p, i) => { 
+                t[p.currency] = (t[p.currency] || 0) + parseFloat(p.price);
+                items.innerHTML += `<div class="flex justify-between bg-gray-50 p-2 rounded text-[10px]"><span>${p.name}</span><button onclick="removeFromCart(${i})" class="text-red-500 font-bold">✕</button></div>`;
             });
-            let totalTxt = "";
-            for (const key in resumenTotal) { totalTxt += `${key}${resumenTotal[key].toFixed(2)} `; }
-            document.getElementById('totalContainer').innerText = cart.length > 0 ? `TOTAL: ${totalTxt}` : "TOTAL: 0";
+            let txt = ""; for(const k in t) txt += `${k}${t[k].toFixed(2)} `;
+            document.getElementById('totalContainer').innerText = cart.length ? `TOTAL: ${txt}` : "CARRITO VACÍO";
         }
 
         function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
 
-        // SOLUCIÓN DEFINITIVA WHATSAPP (PC Y MÓVIL)
+        // ENVÍO DE PEDIDO MEJORADO (SOLUCIÓN DEFINITIVA)
         async function sendOrder() {
-            let wa = localStorage.getItem('global_wa');
-            if(!wa || wa === "") {
-                alert("Por favor, el administrador debe configurar un número de WhatsApp en el Panel Admin.");
-                return;
-            }
-
-            if(cart.length === 0) {
-                alert("Carrito vacío.");
-                return;
-            }
+            if(!window.currentWhatsApp) return alert("EL DUEÑO NO HA CONFIGURADO SU WHATSAPP EN EL PANEL ADMIN.");
+            if(cart.length === 0) return alert("CARRITO VACÍO");
 
             const dir = document.getElementById('manualAddress').value;
             const total = document.getElementById('totalContainer').innerText;
             
-            // Mensaje formateado
-            let message = `🛍️ *NUEVO PEDIDO - GLOBAL*\n\n`;
-            message += cart.map(p => `• ${p.name} (${p.currency}${p.price})`).join('\n');
-            message += `\n\n*${total}*`;
-            if(dir) message += `\n\n🏠 *Dirección:* ${dir}`;
+            let msg = `🛍️ *PEDIDO GLOBAL*\n\n`;
+            msg += cart.map(p => `• ${p.name} (${p.currency}${p.price})`).join('\n');
+            msg += `\n\n*${total}*`;
+            if(dir) msg += `\n\n🏠 *DIRECCIÓN:* ${dir}`;
 
-            // Reducir Stock en Firebase
             await window.reduceStock(cart);
-            
-            // Guardar Historial
             historyData.unshift({ fecha: new Date().toLocaleString(), total: total, resumen: cart.map(p => p.name).join(', ') });
             localStorage.setItem('global_history', JSON.stringify(historyData));
 
-            // URL Universal de WhatsApp (api.whatsapp.com es la que mejor funciona en PC y Móvil)
-            const finalUrl = `https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(message)}`;
+            // Link universal para PC y Celular
+            const url = `https://api.whatsapp.com/send?phone=${window.currentWhatsApp}&text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
             
-            window.open(finalUrl, '_blank');
-            
-            cart = []; 
-            updateCartUI(); 
-            toggleCart();
+            cart = []; updateCartUI(); toggleCart();
         }
 
         function renderHistory() {
             const list = document.getElementById('historyList');
-            list.innerHTML = historyData.length === 0 ? '<p class="text-gray-400">No hay pedidos.</p>' : '';
+            list.innerHTML = historyData.length ? '' : '<p class="text-gray-400">Sin historial.</p>';
             historyData.forEach(h => {
-                list.innerHTML += `<div class="bg-white p-3 rounded-lg shadow-sm border-l-4 border-yellow-500 text-xs"><b>${h.fecha}</b><br>${h.resumen}<br><span class="text-green-600 font-bold">${h.total}</span></div>`;
+                list.innerHTML += `<div class="bg-white p-3 rounded-lg border-l-4 border-yellow-500 text-xs mb-2 shadow-sm"><b>${h.fecha}</b><br>${h.resumen}<br><span class="text-green-600 font-bold">${h.total}</span></div>`;
             });
         }
 
         function renderAdminTable() {
             const tb = document.getElementById('adminTableBody'); if(!tb) return; tb.innerHTML = '';
             window.allProducts.forEach(p => {
-                tb.innerHTML += `<tr class="border-b"><td class="p-2">${p.name}</td><td class="p-2 flex gap-2"><button onclick="loadToEdit('${p.id}')" class="text-blue-600">Edit</button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500">X</button></td></tr>`;
+                tb.innerHTML += `<tr class="border-b"><td class="p-2">${p.name}</td><td class="p-2 flex gap-2"><button onclick="loadToEdit('${p.id}')" class="text-blue-500">Editar</button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500">X</button></td></tr>`;
             });
         }
 
@@ -311,18 +290,10 @@
             document.getElementById('prodCurrency').value = p.currency;
             document.getElementById('prodStock').value = p.stock;
             document.getElementById('prodDesc').value = p.desc || "";
-            document.getElementById('adminActionTitle').innerText = "Editando...";
             window.scrollTo(0,0);
         }
 
-        function closeAdmin() { 
-            document.getElementById('adminPanel').classList.add('hidden'); 
-            document.getElementById('editId').value = "";
-            document.getElementById('prodName').value = "";
-            document.getElementById('prodPrice').value = "";
-            document.getElementById('prodStock').value = "";
-            document.getElementById('prodDesc').value = "";
-        }
+        function closeAdmin() { document.getElementById('adminPanel').classList.add('hidden'); document.getElementById('editId').value = ""; }
     </script>
 </body>
 </html>
