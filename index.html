@@ -7,11 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* AJUSTE AUTOMÁTICO DE IMÁGENES */
         .product-card img { 
             width: 100%; 
             height: 180px; 
-            object-fit: contain; /* Ajusta sin deformar ni cortar */
+            object-fit: contain; 
             background: #ffffff; 
             padding: 5px; 
         }
@@ -33,13 +32,13 @@
     <div id="sideMenu" class="fixed top-0 h-full w-72 bg-slate-900 text-white p-5 shadow-2xl z-[2000]">
         <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4 text-yellow-500 font-black text-2xl italic">GLOBAL <button onclick="toggleMenu()" class="text-white text-3xl">×</button></div>
         <nav class="space-y-4 font-bold">
-            <button onclick="showView('catalog')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3 text-sm"><i class="fas fa-home text-yellow-500"></i> INICIO</button>
-            <button onclick="showView('history')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3 text-sm"><i class="fas fa-history text-yellow-500"></i> MIS PEDIDOS</button>
+            <button onclick="showView('catalog')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3 text-sm uppercase"><i class="fas fa-home text-yellow-500"></i> Inicio</button>
+            <button onclick="showView('history')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3 text-sm uppercase"><i class="fas fa-history text-yellow-500"></i> Mis Pedidos</button>
             <div class="mt-6 p-4 bg-slate-800 rounded-xl">
                 <p class="text-gray-400 text-[10px] uppercase mb-2 font-black italic">Dirección de Envío</p>
                 <textarea id="manualAddress" placeholder="Escribe tu dirección..." class="w-full bg-slate-700 text-white p-2 rounded text-xs h-16 outline-none border border-slate-600 focus:border-yellow-500"></textarea>
             </div>
-            <button onclick="accessAdmin()" class="w-full text-left p-3 text-red-400 mt-10 border-t border-gray-800 pt-6 flex items-center gap-3 text-xs"><i class="fas fa-lock"></i> PANEL ADMINISTRADOR</button>
+            <button onclick="accessAdmin()" class="w-full text-left p-3 text-red-400 mt-10 border-t border-gray-800 pt-6 flex items-center gap-3 text-xs uppercase"><i class="fas fa-lock"></i> Panel Administrador</button>
         </nav>
     </div>
 
@@ -61,14 +60,25 @@
                 <div class="flex justify-between items-center mb-6"><h2 class="font-black italic text-slate-800 uppercase">Configuración de Tienda</h2><button onclick="closeAdmin()" class="text-red-500">✕</button></div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2 p-4 bg-green-50 rounded-xl border border-green-200">
-                        <label class="block text-[10px] font-black mb-1 text-green-700 uppercase">Número para recibir pedidos (Con código de país)</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="globalWhatsAppInput" placeholder="Ej: 50588887766" class="border p-3 rounded-lg w-full font-bold outline-none focus:ring-2 ring-green-500">
-                            <button onclick="updateGlobalWhatsApp()" class="bg-green-600 text-white px-6 rounded-lg font-black text-xs">GUARDAR</button>
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-xl border">
+                        <div>
+                            <label class="block text-[10px] font-black mb-1 text-slate-600 uppercase">Número de Ventas</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="globalWhatsAppInput" placeholder="Ej: 50588887766" class="border p-2 rounded-lg w-full font-bold outline-none text-sm">
+                                <button onclick="updateGlobalWhatsApp()" class="bg-green-600 text-white px-4 rounded-lg font-black text-[10px]">GUARDAR</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black mb-1 text-slate-600 uppercase">Nueva Contraseña Admin</label>
+                            <div class="flex gap-2">
+                                <input type="password" id="newPassInput" placeholder="Mínimo 4 caracteres" class="border p-2 rounded-lg w-full font-bold outline-none text-sm">
+                                <button onclick="updateAdminPass()" class="bg-blue-600 text-white px-4 rounded-lg font-black text-[10px]">CAMBIAR</button>
+                            </div>
                         </div>
                     </div>
 
+                    <div class="md:col-span-2 border-t my-2"></div>
+                    
                     <input type="hidden" id="editId">
                     <input type="text" id="prodName" placeholder="Nombre del Producto" class="border p-3 rounded-lg w-full">
                     <div class="flex gap-2">
@@ -87,7 +97,10 @@
         </section>
 
         <section id="historyView" class="hidden">
-            <h2 class="text-xl font-black italic mb-6">HISTORIAL DE PEDIDOS</h2>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-black italic uppercase">Historial de Pedidos</h2>
+                <button onclick="clearHistory()" class="bg-red-500 text-white px-4 py-2 rounded-lg font-black text-[10px] uppercase shadow-md hover:bg-red-600">Borrar Historial</button>
+            </div>
             <div id="historyList" class="space-y-4"></div>
         </section>
     </main>
@@ -97,8 +110,8 @@
         <div id="cartItems" class="space-y-4 overflow-y-auto h-[60vh]"></div>
         <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-gray-50">
             <div id="totalContainer" class="text-xl font-black mb-6 text-center italic">TOTAL: 0</div>
-            <button onclick="sendOrder()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black flex items-center justify-center gap-2">
-                <i class="fab fa-whatsapp"></i> ENVIAR A WHATSAPP
+            <button onclick="sendOrder()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black flex items-center justify-center gap-2 uppercase">
+                <i class="fab fa-whatsapp"></i> Enviar a WhatsApp
             </button>
         </div>
     </div>
@@ -123,11 +136,12 @@
 
         window.allProducts = [];
         window.activeWA = "";
+        window.currentPass = "1234";
 
-        // Listener para el WhatsApp Configurado
         onSnapshot(configRef, (s) => {
             if(s.exists()){
                 window.activeWA = s.data().whatsapp || "";
+                window.currentPass = s.data().pass || "1234";
                 document.getElementById('globalWhatsAppInput').value = window.activeWA;
             }
         });
@@ -136,10 +150,25 @@
             const num = document.getElementById('globalWhatsAppInput').value.replace(/\D/g,'');
             if(!num) return alert("Pon el número con código de país");
             await setDoc(configRef, { whatsapp: num }, { merge: true });
-            alert("Número guardado con éxito.");
+            alert("WhatsApp guardado.");
         };
 
-        window.accessAdmin = () => { if(prompt("Contraseña:") === "1234") { document.getElementById('adminPanel').classList.remove('hidden'); toggleMenu(); } };
+        window.updateAdminPass = async () => {
+            const newP = document.getElementById('newPassInput').value;
+            if(newP.length < 4) return alert("Contraseña muy corta");
+            await setDoc(configRef, { pass: newP }, { merge: true });
+            alert("Contraseña cambiada con éxito.");
+            document.getElementById('newPassInput').value = "";
+        };
+
+        window.accessAdmin = () => { 
+            if(prompt("Contraseña:") === window.currentPass) { 
+                document.getElementById('adminPanel').classList.remove('hidden'); 
+                toggleMenu(); 
+            } else {
+                alert("Incorrecto");
+            }
+        };
 
         onSnapshot(query(prodsRef, orderBy("timestamp", "desc")), (s) => {
             window.allProducts = [];
@@ -166,7 +195,7 @@
                     if(id) await updateDoc(doc(db, "productos", id), data);
                     else await addDoc(prodsRef, data);
                     closeAdmin();
-                } catch(e) { alert("Error al guardar. ¿Pusiste las reglas en Firebase?"); }
+                } catch(e) { alert("Error al guardar."); }
                 btn.disabled = false; btn.innerText = "GUARDAR PRODUCTO";
             };
             if(file) { const r = new FileReader(); r.onload = (e) => run(e.target.result); r.readAsDataURL(file); } else run(null);
@@ -227,18 +256,14 @@
         async function sendOrder() {
             if(!window.activeWA) return alert("EL ADMINISTRADOR NO HA CONFIGURADO EL WHATSAPP.");
             if(cart.length === 0) return alert("CARRITO VACÍO.");
-
             const dir = document.getElementById('manualAddress').value;
             const total = document.getElementById('totalContainer').innerText;
-            
             let msg = `🛍️ *PEDIDO GLOBAL*\n\n`;
             msg += cart.map(p => `• ${p.name} (${p.currency}${p.price})`).join('\n');
             msg += `\n\n*${total}*`;
             if(dir) msg += `\n\n🏠 *DIRECCIÓN:* ${dir}`;
-
             historyData.unshift({ fecha: new Date().toLocaleString(), total: total, resumen: cart.map(p => p.name).join(', ') });
             localStorage.setItem('global_history', JSON.stringify(historyData));
-
             const url = `https://api.whatsapp.com/send?phone=${window.activeWA}&text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
             cart = []; updateCartUI(); toggleCart();
@@ -246,10 +271,18 @@
 
         function renderHistory() {
             const list = document.getElementById('historyList');
-            list.innerHTML = historyData.length ? '' : '<p class="text-center text-gray-400">Sin pedidos.</p>';
+            list.innerHTML = historyData.length ? '' : '<p class="text-center text-gray-400 py-10">Sin historial.</p>';
             historyData.forEach(h => {
-                list.innerHTML += `<div class="bg-white p-4 rounded-xl border-l-4 border-yellow-500 text-xs shadow-sm"><p class="font-bold text-gray-400">${h.fecha}</p><p class="font-black mt-1 uppercase">${h.resumen}</p><p class="text-green-600 font-black mt-1">${h.total}</p></div>`;
+                list.innerHTML += `<div class="bg-white p-4 rounded-xl border-l-4 border-yellow-500 text-xs shadow-sm mb-2"><p class="font-bold text-gray-400">${h.fecha}</p><p class="font-black mt-1 uppercase">${h.resumen}</p><p class="text-green-600 font-black mt-1">${h.total}</p></div>`;
             });
+        }
+
+        function clearHistory() { 
+            if(confirm("¿Estás seguro de que quieres borrar todo tu historial de pedidos?")) {
+                historyData = [];
+                localStorage.removeItem('global_history');
+                renderHistory();
+            }
         }
 
         function renderAdminTable() {
