@@ -7,13 +7,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* AJUSTE DE IMÁGENES: Asegura que se vean completas sin importar el tamaño */
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain; /* Esto hace que la imagen no se corte */
+            background-color: #f9fafb;
+            padding: 8px;
+        }
         .product-card { border: 1px solid #eee; transition: 0.2s; background: white; border-radius: 15px; overflow: hidden; cursor: pointer; }
         #sideMenu { transition: 0.3s; left: -100%; z-index: 1000; }
         #sideMenu.active { left: 0; }
         .amazon-gradient { background: #131921; }
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #fbbf24; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #detailModal.hidden { display: none; }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
@@ -25,7 +32,7 @@
             <button onclick="showView('history')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3"><i class="fas fa-history text-yellow-500"></i> Mi Historial</button>
             <div class="mt-6 p-4 bg-slate-800 rounded-xl text-xs">
                 <p class="text-gray-400 uppercase mb-2 italic font-black">Mis Datos</p>
-                <textarea id="manualAddress" placeholder="Dirección para entregas..." class="w-full bg-slate-700 text-white p-2 rounded-lg h-20 outline-none"></textarea>
+                <textarea id="manualAddress" placeholder="Dirección exacta para entregas..." class="w-full bg-slate-700 text-white p-2 rounded-lg h-20 outline-none"></textarea>
             </div>
             <button onclick="accessAdmin()" class="w-full text-left p-3 text-red-400 mt-10 border-t border-gray-800 pt-6 flex items-center gap-3"><i class="fas fa-lock"></i> Panel Admin</button>
         </nav>
@@ -52,10 +59,9 @@
         <section id="catalogView">
             <div id="adminPanel" class="hidden bg-white p-6 rounded-2xl shadow-xl mb-8 border-2 border-yellow-500">
                 <div class="flex justify-between items-center mb-4"><h2 id="adminActionTitle" class="font-black italic uppercase">Agregar Producto</h2><button onclick="closeAdmin()" class="text-red-500 text-2xl">✕</button></div>
-                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="hidden" id="editId">
-                    <input type="text" id="prodName" placeholder="Nombre" class="border p-3 rounded-lg w-full">
+                    <input type="text" id="prodName" placeholder="Nombre del producto" class="border p-3 rounded-lg w-full">
                     <div class="flex gap-2">
                         <input type="number" id="prodPrice" placeholder="Precio" class="border p-3 rounded-lg w-full">
                         <select id="prodCurrency" class="border p-3 rounded-lg bg-gray-50 font-bold">
@@ -63,20 +69,17 @@
                             <option value="$">$ USD</option>
                         </select>
                     </div>
-                    <input type="number" id="prodStock" placeholder="Stock" class="border p-3 rounded-lg w-full">
-                    <input type="text" id="adminWhatsapp" placeholder="WhatsApp Receptor (Ej: 505...)" class="border p-3 rounded-lg w-full bg-yellow-50">
-                    <textarea id="prodDesc" placeholder="Descripción del producto..." class="border p-3 rounded-lg w-full md:col-span-2"></textarea>
+                    <input type="number" id="prodStock" placeholder="Stock disponible" class="border p-3 rounded-lg w-full">
+                    <input type="text" id="adminWhatsapp" placeholder="WhatsApp Receptor (Ej: 50588888888)" class="border p-3 rounded-lg w-full bg-yellow-50">
+                    <textarea id="prodDesc" placeholder="Descripción..." class="border p-3 rounded-lg w-full md:col-span-2"></textarea>
                     <input type="file" id="prodFile" class="text-xs w-full">
                     <button onclick="saveToFirebase()" class="md:col-span-2 bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase flex justify-center items-center gap-3">
-                        <span id="saveBtnText">GUARDAR EN LA NUBE</span><div id="saveLoader" class="loader"></div>
+                        <span id="saveBtnText">GUARDAR CAMBIOS</span><div id="saveLoader" class="loader"></div>
                     </button>
-                    <div class="md:col-span-2 p-3 bg-gray-100 rounded-lg flex gap-2">
-                        <input type="text" id="newAdminPass" placeholder="Cambiar Clave" class="border p-2 rounded-lg w-full text-xs">
-                        <button onclick="updateCloudPassword()" class="bg-blue-600 text-white px-4 rounded-lg text-[10px] font-bold">ACTUALIZAR CLAVE</button>
-                    </div>
                 </div>
                 <div class="mt-8 overflow-x-auto"><table class="w-full text-[11px] text-left"><tbody id="adminTableBody"></tbody></table></div>
             </div>
+
             <div id="productGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
         </section>
 
@@ -92,7 +95,7 @@
     <div id="detailModal" class="fixed inset-0 bg-black/80 z-[4000] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl overflow-hidden relative shadow-2xl">
             <button onclick="closeDetail()" class="absolute top-3 right-3 bg-white/90 rounded-full w-8 h-8 font-bold shadow-md">✕</button>
-            <img id="mImg" class="w-full h-72 object-cover bg-gray-200">
+            <img id="mImg" class="w-full h-72 object-contain bg-gray-100 p-4">
             <div class="p-6">
                 <h2 id="mTitle" class="text-2xl font-black uppercase text-slate-800 mb-2"></h2>
                 <p id="mDesc" class="text-sm text-gray-600 mb-4 h-24 overflow-y-auto"></p>
@@ -108,7 +111,7 @@
         <div class="flex justify-between items-center mb-6 border-b pb-4 font-black italic">CARRITO <button onclick="toggleCart()" class="text-3xl">✕</button></div>
         <div id="cartItems" class="space-y-4 overflow-y-auto max-h-[60vh]"></div>
         <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-gray-50 text-center">
-            <div id="totalContainer" class="text-xl font-black mb-4"></div>
+            <div id="totalContainer" class="text-xl font-black mb-4 italic">TOTAL: 0</div>
             <button onclick="sendOrder()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black flex items-center justify-center gap-2 uppercase">
                 <i class="fab fa-whatsapp"></i> ENVIAR PEDIDO
             </button>
@@ -139,14 +142,7 @@
 
         onSnapshot(configRef, (s) => { if(s.exists()) currentPass = s.data().pass; });
 
-        window.updateCloudPassword = async () => {
-            const newP = document.getElementById('newAdminPass').value;
-            if(!newP) return;
-            await setDoc(configRef, { pass: newP }, { merge: true });
-            alert("Clave actualizada.");
-        };
-
-        window.accessAdmin = () => { if(prompt("Acceso:") === currentPass) { document.getElementById('adminPanel').classList.remove('hidden'); toggleMenu(); } };
+        window.accessAdmin = () => { if(prompt("Acceso Admin:") === currentPass) { document.getElementById('adminPanel').classList.remove('hidden'); toggleMenu(); } };
 
         onSnapshot(query(prodsRef, orderBy("timestamp", "desc")), (s) => {
             window.allProducts = [];
@@ -159,19 +155,21 @@
             const data = { 
                 name: document.getElementById('prodName').value,
                 price: document.getElementById('prodPrice').value,
-                currency: document.getElementById('prodCurrency').value, // AQUÍ SE GUARDA C$ O $
+                currency: document.getElementById('prodCurrency').value,
                 stock: parseInt(document.getElementById('prodStock').value) || 0,
                 desc: document.getElementById('prodDesc').value,
                 timestamp: Date.now()
             };
-            const wa = document.getElementById('adminWhatsapp').value;
+            
+            const waField = document.getElementById('adminWhatsapp').value;
+            if(waField) localStorage.setItem('global_wa', waField.replace(/\D/g,''));
+
             const file = document.getElementById('prodFile').files[0];
             document.getElementById('saveLoader').style.display = 'block';
 
             const run = async (img) => {
                 if(img) data.img = img;
                 if(id) await updateDoc(doc(db, "productos", id), data); else await addDoc(prodsRef, data);
-                if(wa) localStorage.setItem('global_wa', wa);
                 closeAdmin(); document.getElementById('saveLoader').style.display = 'none';
             };
             if(file) { const r = new FileReader(); r.onload = (e) => run(e.target.result); r.readAsDataURL(file); } else run(null);
@@ -181,7 +179,10 @@
             for(const item of items) {
                 const ref = doc(db, "productos", item.id);
                 const s = await getDoc(ref);
-                if(s.exists() && s.data().stock > 0) await updateDoc(ref, { stock: s.data().stock - 1 });
+                if(s.exists()) {
+                    const newStock = Math.max(0, s.data().stock - 1);
+                    await updateDoc(ref, { stock: newStock });
+                }
             }
         };
 
@@ -209,13 +210,14 @@
             grid.innerHTML = '';
             window.allProducts.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
                 const out = p.stock <= 0;
-                grid.innerHTML += `<div class="product-card flex flex-col shadow-sm border ${out?'grayscale opacity-60':''}" onclick="openDetail('${p.id}')">
-                    <img src="${p.img || 'https://via.placeholder.com/150'}" class="w-full h-40 object-cover">
+                grid.innerHTML += `
+                <div class="product-card flex flex-col shadow-sm border ${out?'grayscale opacity-60':''}" onclick="openDetail('${p.id}')">
+                    <img src="${p.img || 'https://via.placeholder.com/150'}" alt="${p.name}">
                     <div class="p-3">
-                        <h3 class="font-bold text-[10px] uppercase line-clamp-2 h-8">${p.name}</h3>
+                        <h3 class="font-bold text-[11px] uppercase line-clamp-2 h-8 leading-tight">${p.name}</h3>
                         <p class="text-[10px] font-black ${out?'text-red-500':'text-green-600'}">${out?'AGOTADO':'STOCK: '+p.stock}</p>
                         <p class="text-lg font-black mt-1 text-slate-900">${p.currency}${p.price}</p>
-                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200 text-gray-400':'bg-yellow-400'}">AÑADIR</button>
+                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200 text-gray-400':'bg-yellow-400 hover:bg-yellow-500'}">AÑADIR</button>
                     </div>
                 </div>`;
             });
@@ -224,7 +226,7 @@
         function openDetail(id) {
             const p = window.allProducts.find(x => x.id === id);
             document.getElementById('mTitle').innerText = p.name;
-            document.getElementById('mDesc').innerText = p.desc || "Sin descripción.";
+            document.getElementById('mDesc').innerText = p.desc || "Sin descripción disponible.";
             document.getElementById('mPrice').innerText = `${p.currency}${p.price}`;
             document.getElementById('mImg').src = p.img || 'https://via.placeholder.com/300';
             const btn = document.getElementById('mBtn');
@@ -235,28 +237,45 @@
             document.getElementById('detailModal').classList.remove('hidden');
         }
 
-        function addToCart(id) { const p = window.allProducts.find(x => x.id === id); if(p.stock > 0) { cart.push({...p}); updateCartUI(); } }
+        function addToCart(id) { 
+            const p = window.allProducts.find(x => x.id === id); 
+            if(p && p.stock > 0) { 
+                cart.push({...p}); 
+                updateCartUI(); 
+            } 
+        }
 
         function updateCartUI() {
             document.getElementById('cartCount').innerText = cart.length;
             const items = document.getElementById('cartItems'); items.innerHTML = '';
-            let resumenTotal = {}; // Agrupar por moneda
+            let resumenTotal = {}; 
+
             cart.forEach((p, i) => { 
                 resumenTotal[p.currency] = (resumenTotal[p.currency] || 0) + parseFloat(p.price);
-                items.innerHTML += `<div class="flex justify-between items-center text-[10px] border-b pb-2"><span>${p.name}</span><button onclick="removeFromCart(${i})" class="text-red-500 font-bold">✕</button></div>`; 
+                items.innerHTML += `
+                <div class="flex justify-between items-center bg-gray-50 p-2 rounded-lg border">
+                    <span class="text-[10px] font-bold truncate w-40">${p.name}</span>
+                    <button onclick="removeFromCart(${i})" class="text-red-500 px-2"><i class="fas fa-trash"></i></button>
+                </div>`; 
             });
             
-            // Mostrar total combinado si hay varias monedas
             let totalTxt = "";
             for (const key in resumenTotal) { totalTxt += `${key}${resumenTotal[key].toFixed(2)} `; }
-            document.getElementById('totalContainer').innerText = `TOTAL: ${totalTxt}`;
+            document.getElementById('totalContainer').innerText = cart.length > 0 ? `TOTAL: ${totalTxt}` : "CARRITO VACÍO";
         }
 
         function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
 
+        // CORRECCIÓN WHATSAPP
         async function sendOrder() {
-            const wa = localStorage.getItem('global_wa');
-            if(!wa || cart.length === 0) return alert("Error en Carrito o WhatsApp.");
+            let wa = localStorage.getItem('global_wa');
+            // Si no hay número guardado, pide uno o usa uno por defecto (Pon el tuyo aquí)
+            if(!wa || wa.trim() === "") {
+                wa = "50500000000"; // CAMBIA ESTO POR TU NÚMERO
+            }
+
+            if(cart.length === 0) return alert("Añade productos al carrito primero.");
+            
             const dir = document.getElementById('manualAddress').value;
             const total = document.getElementById('totalContainer').innerText;
             
@@ -265,16 +284,23 @@
             localStorage.setItem('global_history', JSON.stringify(historyData));
 
             await window.reduceStock(cart);
-            let txt = `🛍️ *PEDIDO GLOBAL*%0A%0A${cart.map(p => `• ${p.name} (${p.currency}${p.price})`).join('%0A')}%0A%0A*${total}*%0A`;
-            if(dir) txt += `%0A🏠 *Dir:* ${dir}`;
             
-            window.open(`https://wa.me/${wa}?text=${txt}`, '_blank');
-            cart = []; updateCartUI(); toggleCart();
+            let txt = `🛍️ *NUEVO PEDIDO - GLOBAL*%0A%0A`;
+            txt += cart.map(p => `• ${p.name} (${p.currency}${p.price})`).join('%0A');
+            txt += `%0A%0A*${total}*`;
+            if(dir) txt += `%0A%0A🏠 *Dirección:* ${dir}`;
+            
+            const url = `https://wa.me/${wa}?text=${txt}`;
+            window.open(url, '_blank');
+            
+            cart = []; 
+            updateCartUI(); 
+            toggleCart();
         }
 
         function renderHistory() {
             const list = document.getElementById('historyList');
-            list.innerHTML = historyData.length === 0 ? '<p class="text-center text-gray-400 py-10">Sin historial.</p>' : '';
+            list.innerHTML = historyData.length === 0 ? '<p class="text-center text-gray-400 py-10">No tienes pedidos recientes.</p>' : '';
             historyData.forEach(h => {
                 list.innerHTML += `<div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-yellow-500"><p class="text-[8px] text-gray-400">${h.fecha}</p><p class="text-xs font-bold uppercase">${h.resumen}</p><p class="text-green-600 font-black">${h.total}</p></div>`;
             });
@@ -285,7 +311,7 @@
         function renderAdminTable() {
             const tb = document.getElementById('adminTableBody'); if(!tb) return; tb.innerHTML = '';
             window.allProducts.forEach(p => {
-                tb.innerHTML += `<tr class="border-b"><td class="p-2">${p.name} (${p.currency}${p.price})</td><td class="p-2 flex gap-3"><button onclick="loadToEdit('${p.id}')" class="text-blue-600 font-bold">Edit</button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500 font-bold">X</button></td></tr>`;
+                tb.innerHTML += `<tr class="border-b"><td class="p-2">${p.name} (${p.currency}${p.price})</td><td class="p-2 flex gap-3"><button onclick="loadToEdit('${p.id}')" class="text-blue-600">Edit</button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500">X</button></td></tr>`;
             });
         }
 
@@ -305,6 +331,10 @@
             document.getElementById('adminPanel').classList.add('hidden'); 
             document.getElementById('editId').value = ""; 
             document.getElementById('adminActionTitle').innerText = "Agregar Producto";
+            document.getElementById('prodName').value = "";
+            document.getElementById('prodPrice').value = "";
+            document.getElementById('prodStock').value = "";
+            document.getElementById('prodDesc').value = "";
         }
     </script>
 </body>
