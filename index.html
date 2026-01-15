@@ -7,21 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .product-card img { 
-            width: 100%; 
-            height: 180px; 
-            object-fit: contain; 
-            background: #ffffff; 
-            padding: 5px; 
-        }
-        .product-card { 
-            border: 1px solid #e5e7eb; 
-            transition: 0.3s; 
-            background: white; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+        .product-card img { width: 100%; height: 180px; object-fit: contain; background: #ffffff; padding: 5px; }
+        .product-card { border: 1px solid #e5e7eb; transition: 0.3s; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         #sideMenu { transition: 0.3s; left: -100%; z-index: 1000; }
         #sideMenu.active { left: 0; }
         .amazon-gradient { background: #131921; }
@@ -58,41 +45,31 @@
         <section id="catalogView">
             <div id="adminPanel" class="hidden bg-white p-6 rounded-2xl shadow-2xl mb-8 border-2 border-yellow-500">
                 <div class="flex justify-between items-center mb-6"><h2 class="font-black italic text-slate-800 uppercase">Configuración de Tienda</h2><button onclick="closeAdmin()" class="text-red-500">✕</button></div>
-                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-xl border">
                         <div>
                             <label class="block text-[10px] font-black mb-1 text-slate-600 uppercase">Número de Ventas</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="globalWhatsAppInput" placeholder="Ej: 50588887766" class="border p-2 rounded-lg w-full font-bold outline-none text-sm">
-                                <button onclick="updateGlobalWhatsApp()" class="bg-green-600 text-white px-4 rounded-lg font-black text-[10px]">GUARDAR</button>
-                            </div>
+                            <div class="flex gap-2"><input type="text" id="globalWhatsAppInput" class="border p-2 rounded-lg w-full font-bold outline-none text-sm"><button onclick="updateGlobalWhatsApp()" class="bg-green-600 text-white px-4 rounded-lg font-black text-[10px]">GUARDAR</button></div>
                         </div>
                         <div>
                             <label class="block text-[10px] font-black mb-1 text-slate-600 uppercase">Nueva Contraseña Admin</label>
-                            <div class="flex gap-2">
-                                <input type="password" id="newPassInput" placeholder="Mínimo 4 caracteres" class="border p-2 rounded-lg w-full font-bold outline-none text-sm">
-                                <button onclick="updateAdminPass()" class="bg-blue-600 text-white px-4 rounded-lg font-black text-[10px]">CAMBIAR</button>
-                            </div>
+                            <div class="flex gap-2"><input type="password" id="newPassInput" class="border p-2 rounded-lg w-full font-bold outline-none text-sm"><button onclick="updateAdminPass()" class="bg-blue-600 text-white px-4 rounded-lg font-black text-[10px]">CAMBIAR</button></div>
                         </div>
                     </div>
-
                     <div class="md:col-span-2 border-t my-2"></div>
-                    
                     <input type="hidden" id="editId">
                     <input type="text" id="prodName" placeholder="Nombre del Producto" class="border p-3 rounded-lg w-full">
                     <div class="flex gap-2">
                         <input type="number" id="prodPrice" placeholder="Precio" class="border p-3 rounded-lg w-full">
                         <select id="prodCurrency" class="border p-3 rounded-lg font-bold"><option value="C$">C$ NIO</option><option value="$">$ USD</option></select>
                     </div>
-                    <input type="number" id="prodStock" placeholder="Stock Inicial" class="border p-3 rounded-lg w-full">
+                    <input type="number" id="prodStock" placeholder="Stock (Vacío = Infinito)" class="border p-3 rounded-lg w-full">
                     <textarea id="prodDesc" placeholder="Descripción breve..." class="border p-3 rounded-lg w-full md:col-span-2"></textarea>
                     <input type="file" id="prodFile" class="text-xs bg-gray-50 p-2 rounded-lg w-full">
                     <button onclick="saveToFirebase()" id="saveBtn" class="md:col-span-2 bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase hover:opacity-90">GUARDAR PRODUCTO</button>
                 </div>
                 <div class="mt-8 overflow-x-auto"><table class="w-full text-[11px]"><tbody id="adminTableBody"></tbody></table></div>
             </div>
-
             <div id="productGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
         </section>
 
@@ -118,7 +95,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, setDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDFEw-S5KufBqeofyEqqnjCxbU7ElcqS2k",
@@ -134,9 +111,7 @@
         const prodsRef = collection(db, "productos");
         const configRef = doc(db, "configuracion", "seguridad");
 
-        window.allProducts = [];
-        window.activeWA = "";
-        window.currentPass = "1234";
+        window.allProducts = []; window.activeWA = ""; window.currentPass = "1234";
 
         onSnapshot(configRef, (s) => {
             if(s.exists()){
@@ -148,27 +123,19 @@
 
         window.updateGlobalWhatsApp = async () => {
             const num = document.getElementById('globalWhatsAppInput').value.replace(/\D/g,'');
-            if(!num) return alert("Pon el número con código de país");
             await setDoc(configRef, { whatsapp: num }, { merge: true });
-            alert("WhatsApp guardado.");
+            alert("Guardado");
         };
 
         window.updateAdminPass = async () => {
             const newP = document.getElementById('newPassInput').value;
-            if(newP.length < 4) return alert("Contraseña muy corta");
+            if(newP.length < 4) return alert("Corta");
             await setDoc(configRef, { pass: newP }, { merge: true });
-            alert("Contraseña cambiada con éxito.");
+            alert("Cambiado");
             document.getElementById('newPassInput').value = "";
         };
 
-        window.accessAdmin = () => { 
-            if(prompt("Contraseña:") === window.currentPass) { 
-                document.getElementById('adminPanel').classList.remove('hidden'); 
-                toggleMenu(); 
-            } else {
-                alert("Incorrecto");
-            }
-        };
+        window.accessAdmin = () => { if(prompt("Pass:") === window.currentPass) { document.getElementById('adminPanel').classList.remove('hidden'); toggleMenu(); } };
 
         onSnapshot(query(prodsRef, orderBy("timestamp", "desc")), (s) => {
             window.allProducts = [];
@@ -177,31 +144,37 @@
         });
 
         window.saveToFirebase = async () => {
-            const btn = document.getElementById('saveBtn');
-            btn.disabled = true; btn.innerText = "GUARDANDO...";
+            const btn = document.getElementById('saveBtn'); btn.disabled = true;
             const id = document.getElementById('editId').value;
+            const stockVal = document.getElementById('prodStock').value;
             const data = { 
                 name: document.getElementById('prodName').value,
                 price: document.getElementById('prodPrice').value,
                 currency: document.getElementById('prodCurrency').value,
-                stock: parseInt(document.getElementById('prodStock').value) || 0,
+                stock: stockVal === "" ? "inf" : parseInt(stockVal),
                 desc: document.getElementById('prodDesc').value,
                 timestamp: Date.now()
             };
             const file = document.getElementById('prodFile').files[0];
             const run = async (img) => {
                 if(img) data.img = img;
-                try {
-                    if(id) await updateDoc(doc(db, "productos", id), data);
-                    else await addDoc(prodsRef, data);
-                    closeAdmin();
-                } catch(e) { alert("Error al guardar."); }
-                btn.disabled = false; btn.innerText = "GUARDAR PRODUCTO";
+                if(id) await updateDoc(doc(db, "productos", id), data);
+                else await addDoc(prodsRef, data);
+                closeAdmin(); btn.disabled = false;
             };
             if(file) { const r = new FileReader(); r.onload = (e) => run(e.target.result); r.readAsDataURL(file); } else run(null);
         };
 
-        window.deleteFromFirebase = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "productos", id)); };
+        window.reduceStock = async (items) => {
+            for(const item of items) {
+                if(item.stock !== "inf") {
+                    const ref = doc(db, "productos", item.id);
+                    await updateDoc(ref, { stock: increment(-1) });
+                }
+            }
+        };
+
+        window.deleteFromFirebase = async (id) => { if(confirm("¿Borrar?")) await deleteDoc(doc(db, "productos", id)); };
     </script>
 
     <script>
@@ -218,18 +191,20 @@
         }
 
         function renderLocalProducts() {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = '';
+            const grid = document.getElementById('productGrid'); grid.innerHTML = '';
             window.allProducts.forEach(p => {
-                const out = p.stock <= 0;
+                const isInf = p.stock === "inf";
+                const out = !isInf && p.stock <= 0;
                 grid.innerHTML += `
                 <div class="product-card flex flex-col">
                     <img src="${p.img || 'https://via.placeholder.com/150'}">
                     <div class="p-3">
                         <h3 class="font-bold text-[10px] uppercase line-clamp-2 h-7">${p.name}</h3>
-                        <p class="text-[9px] font-bold ${out?'text-red-500':'text-green-600'}">${out?'AGOTADO':'STOCK: '+p.stock}</p>
+                        <p class="text-[9px] font-bold ${out?'text-red-500':'text-green-600'}">
+                            ${isInf ? 'DISPONIBLE' : (out ? 'AGOTADO' : 'STOCK: '+p.stock)}
+                        </p>
                         <p class="text-lg font-black text-slate-900">${p.currency}${p.price}</p>
-                        <button onclick="addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200':'bg-yellow-400'}">AÑADIR</button>
+                        <button onclick="addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200 text-gray-400':'bg-yellow-400'}">AÑADIR</button>
                     </div>
                 </div>`;
             });
@@ -237,7 +212,7 @@
 
         function addToCart(id) { 
             const p = window.allProducts.find(x => x.id === id); 
-            if(p && p.stock > 0) { cart.push({...p}); updateCartUI(); } 
+            if(p && (p.stock === "inf" || p.stock > 0)) { cart.push({...p}); updateCartUI(); } 
         }
 
         function updateCartUI() {
@@ -254,18 +229,24 @@
         function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
 
         async function sendOrder() {
-            if(!window.activeWA) return alert("EL ADMINISTRADOR NO HA CONFIGURADO EL WHATSAPP.");
-            if(cart.length === 0) return alert("CARRITO VACÍO.");
+            if(!window.activeWA) return alert("CONFIGURA EL WHATSAPP.");
+            if(cart.length === 0) return alert("VACÍO.");
+            
+            // RESTAR STOCK ANTES DE ENVIAR
+            const tempCart = [...cart];
+            await window.reduceStock(tempCart);
+
             const dir = document.getElementById('manualAddress').value;
             const total = document.getElementById('totalContainer').innerText;
             let msg = `🛍️ *PEDIDO GLOBAL*\n\n`;
-            msg += cart.map(p => `• ${p.name} (${p.currency}${p.price})`).join('\n');
+            msg += tempCart.map(p => `• ${p.name} (${p.currency}${p.price})`).join('\n');
             msg += `\n\n*${total}*`;
             if(dir) msg += `\n\n🏠 *DIRECCIÓN:* ${dir}`;
-            historyData.unshift({ fecha: new Date().toLocaleString(), total: total, resumen: cart.map(p => p.name).join(', ') });
+            
+            historyData.unshift({ fecha: new Date().toLocaleString(), total: total, resumen: tempCart.map(p => p.name).join(', ') });
             localStorage.setItem('global_history', JSON.stringify(historyData));
-            const url = `https://api.whatsapp.com/send?phone=${window.activeWA}&text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
+            
+            window.open(`https://api.whatsapp.com/send?phone=${window.activeWA}&text=${encodeURIComponent(msg)}`, '_blank');
             cart = []; updateCartUI(); toggleCart();
         }
 
@@ -277,18 +258,12 @@
             });
         }
 
-        function clearHistory() { 
-            if(confirm("¿Estás seguro de que quieres borrar todo tu historial de pedidos?")) {
-                historyData = [];
-                localStorage.removeItem('global_history');
-                renderHistory();
-            }
-        }
+        function clearHistory() { if(confirm("¿Borrar historial?")) { historyData = []; localStorage.removeItem('global_history'); renderHistory(); } }
 
         function renderAdminTable() {
             const tb = document.getElementById('adminTableBody'); if(!tb) return; tb.innerHTML = '';
             window.allProducts.forEach(p => {
-                tb.innerHTML += `<tr class="border-b"><td class="p-2 uppercase font-bold">${p.name}</td><td class="p-2 flex gap-3"><button onclick="loadToEdit('${p.id}')" class="text-blue-500 font-bold uppercase">Editar</button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500 font-bold uppercase">X</button></td></tr>`;
+                tb.innerHTML += `<tr class="border-b"><td class="p-2 uppercase font-bold">${p.name}</td><td class="p-2 flex gap-3"><button onclick="loadToEdit('${p.id}')" class="text-blue-500 font-bold uppercase text-[9px]">Editar</button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500 font-bold uppercase text-[9px]">X</button></td></tr>`;
             });
         }
 
@@ -298,19 +273,12 @@
             document.getElementById('prodName').value = p.name;
             document.getElementById('prodPrice').value = p.price;
             document.getElementById('prodCurrency').value = p.currency;
-            document.getElementById('prodStock').value = p.stock;
+            document.getElementById('prodStock').value = p.stock === "inf" ? "" : p.stock;
             document.getElementById('prodDesc').value = p.desc || "";
             window.scrollTo(0,0);
         }
 
-        function closeAdmin() { 
-            document.getElementById('adminPanel').classList.add('hidden'); 
-            document.getElementById('editId').value = "";
-            document.getElementById('prodName').value = "";
-            document.getElementById('prodPrice').value = "";
-            document.getElementById('prodStock').value = "";
-            document.getElementById('prodDesc').value = "";
-        }
+        function closeAdmin() { document.getElementById('adminPanel').classList.add('hidden'); document.getElementById('editId').value = ""; document.getElementById('prodName').value = ""; document.getElementById('prodPrice').value = ""; document.getElementById('prodStock').value = ""; document.getElementById('prodDesc').value = ""; }
     </script>
 </body>
 </html>
