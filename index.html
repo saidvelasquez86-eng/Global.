@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLOBAL V0.6.1 | Tienda Real</title>
+    <title>GLOBAL V0.6.1 | Tienda Final</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .product-card img { width: 100%; height: 180px; object-fit: contain; background: #f9fafb; padding: 10px; }
-        .product-card { border: 1px solid #eee; transition: 0.2s; background: white; border-radius: 15px; overflow: hidden; }
+        .product-card { border: 1px solid #eee; transition: 0.2s; background: white; border-radius: 15px; overflow: hidden; cursor: pointer; }
         #sideMenu { transition: 0.3s; left: -100%; z-index: 1000; }
         #sideMenu.active { left: 0; }
         .amazon-gradient { background: #131921; }
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #fbbf24; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
@@ -24,15 +22,15 @@
             <button onclick="showView('catalog')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3"><i class="fas fa-home text-yellow-500"></i> Inicio</button>
             <button onclick="showView('history')" class="w-full text-left p-3 hover:bg-slate-800 rounded-lg flex items-center gap-3"><i class="fas fa-history text-yellow-500"></i> Mis Pedidos</button>
             <div class="mt-6 p-4 bg-slate-800 rounded-xl">
-                <p class="text-gray-400 text-[10px] uppercase mb-2">Tu Dirección</p>
-                <textarea id="manualAddress" placeholder="Barrio, calle, casa..." class="w-full bg-slate-700 text-white p-2 rounded text-sm h-16 outline-none"></textarea>
+                <p class="text-gray-400 text-[10px] uppercase mb-2 italic">Dirección de entrega</p>
+                <textarea id="manualAddress" placeholder="Barrio, calle, color de casa..." class="w-full bg-slate-700 text-white p-2 rounded text-sm h-16 outline-none"></textarea>
             </div>
             <button onclick="accessAdmin()" class="w-full text-left p-3 text-red-400 mt-10 border-t border-gray-800 pt-6 flex items-center gap-3"><i class="fas fa-lock"></i> Panel Admin</button>
         </nav>
     </div>
 
-    <header class="amazon-gradient text-white sticky top-0 z-50 p-4">
-        <div class="max-w-6xl mx-auto flex justify-between items-center mb-2">
+    <header class="amazon-gradient text-white sticky top-0 z-50 p-4 shadow-lg">
+        <div class="max-w-6xl mx-auto flex justify-between items-center mb-3">
             <button onclick="toggleMenu()" class="text-2xl"><i class="fas fa-bars"></i></button>
             <h1 class="text-2xl font-black text-yellow-500 italic">GLOBAL</h1>
             <div onclick="toggleCart()" class="relative cursor-pointer">
@@ -40,66 +38,73 @@
                 <span id="cartCount" class="absolute -top-2 -right-2 bg-yellow-500 text-black font-black rounded-full px-1.5 text-[10px]">0</span>
             </div>
         </div>
-        <input type="text" id="searchInput" onkeyup="renderLocalProducts()" placeholder="Busca un producto..." class="w-full p-2.5 rounded-lg text-black outline-none">
+        <input type="text" id="searchInput" onkeyup="renderLocalProducts()" placeholder="Buscar en la tienda..." class="w-full p-3 rounded-xl text-black outline-none border-none shadow-inner">
     </header>
 
     <main class="max-w-6xl mx-auto p-4">
         <section id="catalogView">
-            <div id="adminPanel" class="hidden bg-white p-6 rounded-2xl shadow-xl mb-8 border-2 border-yellow-500">
-                <div class="flex justify-between items-center mb-4"><h2 class="font-black uppercase">Panel de Control</h2><button onclick="closeAdmin()" class="text-red-500">✕</button></div>
+            <div id="adminPanel" class="hidden bg-white p-6 rounded-2xl shadow-2xl mb-8 border-t-4 border-yellow-500">
+                <div class="flex justify-between items-center mb-6"><h2 class="font-black uppercase italic text-slate-800">Panel de Control Global</h2><button onclick="closeAdmin()" class="text-red-500 text-2xl">✕</button></div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                        <label class="block text-[10px] font-bold mb-1">WHATSAPP DE VENTAS (SIN EL +):</label>
+                    <div class="md:col-span-2 p-5 bg-yellow-50 rounded-2xl border-2 border-yellow-200 shadow-sm">
+                        <label class="block text-xs font-black mb-2 text-yellow-700 uppercase">Número de WhatsApp Principal (Con código de país)</label>
                         <div class="flex gap-2">
-                            <input type="text" id="globalWhatsAppInput" placeholder="Ej: 50588888888" class="border p-2 rounded w-full font-bold">
-                            <button onclick="updateGlobalWhatsApp()" class="bg-blue-600 text-white px-4 rounded text-[10px] font-bold">ACTUALIZAR</button>
+                            <input type="text" id="globalWhatsAppInput" placeholder="Ejemplo: 50588888888" class="border-2 border-yellow-300 p-3 rounded-xl w-full font-bold text-lg outline-none focus:border-yellow-500">
+                            <button onclick="updateGlobalWhatsApp()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-6 rounded-xl font-black transition-all">ACTUALIZAR</button>
                         </div>
+                        <p class="text-[10px] mt-2 text-yellow-600 font-bold">* Este número recibirá todos los pedidos de todos los clientes.</p>
                     </div>
 
+                    <div class="border-t pt-4 md:col-span-2"></div>
                     <input type="hidden" id="editId">
-                    <input type="text" id="prodName" placeholder="Nombre Producto" class="border p-3 rounded-lg w-full">
+                    <input type="text" id="prodName" placeholder="Nombre del Producto" class="border p-3 rounded-xl w-full">
                     <div class="flex gap-2">
-                        <input type="number" id="prodPrice" placeholder="Precio" class="border p-3 rounded-lg w-full">
-                        <select id="prodCurrency" class="border p-3 rounded-lg"><option value="C$">C$</option><option value="$">$</option></select>
+                        <input type="number" id="prodPrice" placeholder="Precio" class="border p-3 rounded-xl w-full">
+                        <select id="prodCurrency" class="border p-3 rounded-xl font-bold"><option value="C$">C$ NIO</option><option value="$">$ USD</option></select>
                     </div>
-                    <input type="number" id="prodStock" placeholder="Stock" class="border p-3 rounded-lg w-full">
-                    <textarea id="prodDesc" placeholder="Descripción" class="border p-3 rounded-lg w-full md:col-span-2"></textarea>
-                    <input type="file" id="prodFile" class="text-xs">
-                    <button onclick="saveToFirebase()" class="md:col-span-2 bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase">GUARDAR PRODUCTO</button>
+                    <input type="number" id="prodStock" placeholder="Stock" class="border p-3 rounded-xl w-full">
+                    <textarea id="prodDesc" placeholder="Descripción detallada..." class="border p-3 rounded-xl w-full md:col-span-2 h-24"></textarea>
+                    <input type="file" id="prodFile" class="text-xs bg-gray-50 p-2 rounded-xl w-full border">
+                    <button onclick="saveToFirebase()" class="md:col-span-2 bg-slate-900 text-yellow-500 p-4 rounded-xl font-black uppercase hover:bg-slate-800 transition-all">GUARDAR PRODUCTO EN CATÁLOGO</button>
                 </div>
-                <div class="mt-6 overflow-x-auto"><table class="w-full text-[11px]"><tbody id="adminTableBody"></tbody></table></div>
+                <div class="mt-8 overflow-x-auto">
+                    <table class="w-full text-left text-xs"><tbody id="adminTableBody"></tbody></table>
+                </div>
             </div>
+
             <div id="productGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
         </section>
 
         <section id="historyView" class="hidden">
-            <h2 class="text-xl font-black italic mb-4">MIS COMPRAS</h2>
-            <div id="historyList" class="space-y-3"></div>
+            <h2 class="text-xl font-black italic mb-6 uppercase">Mis Pedidos Realizados</h2>
+            <div id="historyList" class="space-y-4"></div>
         </section>
     </main>
 
-    <div id="detailModal" class="fixed inset-0 bg-black/80 z-[4000] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl overflow-hidden relative shadow-2xl">
-            <button onclick="closeDetail()" class="absolute top-3 right-3 bg-white rounded-full w-8 h-8 font-bold">✕</button>
-            <img id="mImg" class="w-full h-72 object-contain bg-gray-50">
+    <div id="detailModal" class="fixed inset-0 bg-black/90 z-[4000] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl overflow-hidden relative shadow-2xl">
+            <button onclick="closeDetail()" class="absolute top-4 right-4 bg-white/80 rounded-full w-10 h-10 font-bold text-xl shadow-lg z-10">✕</button>
+            <img id="mImg" class="w-full h-80 object-contain bg-white">
             <div class="p-6">
-                <h2 id="mTitle" class="text-xl font-black uppercase mb-1"></h2>
-                <p id="mDesc" class="text-sm text-gray-500 mb-4"></p>
-                <div class="flex justify-between items-center">
-                    <span id="mPrice" class="text-2xl font-black"></span>
-                    <button id="mBtn" class="bg-yellow-400 px-6 py-2 rounded-lg font-black text-sm">AÑADIR</button>
+                <h2 id="mTitle" class="text-2xl font-black uppercase text-slate-900 mb-2"></h2>
+                <p id="mDesc" class="text-sm text-gray-500 mb-6 leading-relaxed h-24 overflow-y-auto"></p>
+                <div class="flex justify-between items-center border-t pt-4">
+                    <span id="mPrice" class="text-3xl font-black text-slate-900"></span>
+                    <button id="mBtn" class="bg-yellow-400 hover:bg-yellow-500 px-8 py-3 rounded-2xl font-black uppercase text-sm shadow-md transition-all">Añadir al Carrito</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="cartModal" class="fixed right-0 top-0 h-full w-full md:w-80 bg-white shadow-2xl p-6 hidden z-[3000]">
-        <div class="flex justify-between items-center mb-6 border-b pb-4 font-black">CARRITO <button onclick="toggleCart()" class="text-3xl">✕</button></div>
-        <div id="cartItems" class="space-y-4 overflow-y-auto h-[60vh]"></div>
-        <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-white shadow-inner">
-            <div id="totalContainer" class="text-xl font-black mb-4 text-center">TOTAL: 0</div>
-            <button onclick="sendOrder()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black">ENVIAR PEDIDO A WHATSAPP</button>
+    <div id="cartModal" class="fixed right-0 top-0 h-full w-full md:w-96 bg-white shadow-2xl p-6 hidden z-[3000]">
+        <div class="flex justify-between items-center mb-6 border-b-2 pb-4"><span class="font-black italic text-xl uppercase">Tu Carrito</span><button onclick="toggleCart()" class="text-3xl font-light">✕</button></div>
+        <div id="cartItems" class="space-y-4 overflow-y-auto h-[55vh] pr-2"></div>
+        <div class="absolute bottom-0 left-0 w-full p-6 border-t bg-gray-50 shadow-inner">
+            <div id="totalContainer" class="text-2xl font-black mb-6 text-center italic text-slate-800">TOTAL: 0</div>
+            <button onclick="sendOrder()" class="w-full bg-green-600 hover:bg-green-700 text-white py-5 rounded-2xl font-black flex items-center justify-center gap-3 uppercase shadow-lg transition-all">
+                <i class="fab fa-whatsapp text-2xl"></i> Enviar pedido por WhatsApp
+            </button>
         </div>
     </div>
 
@@ -122,31 +127,48 @@
         const configRef = doc(db, "configuracion", "seguridad");
 
         window.allProducts = [];
-        window.currentWhatsApp = ""; 
+        window.globalWA = ""; 
+        let currentPass = "1234";
 
-        // Escuchar el número de WhatsApp desde Firebase (Para que todos lo tengan)
-        onSnapshot(configRef, (s) => {
-            if(s.exists()){
-                window.currentWhatsApp = s.data().whatsapp || "";
-                document.getElementById('globalWhatsAppInput').value = window.currentWhatsApp;
-                currentPass = s.data().pass || "1234";
+        // Escucha en tiempo real del número de WhatsApp oficial
+        onSnapshot(configRef, (snap) => {
+            if(snap.exists()){
+                window.globalWA = snap.data().whatsapp || "";
+                currentPass = snap.data().pass || "1234";
+                document.getElementById('globalWhatsAppInput').value = window.globalWA;
+            } else {
+                // Si no existe, lo inicializa
+                setDoc(configRef, { whatsapp: "", pass: "1234" });
             }
         });
 
+        // FUNCION PARA ACTUALIZAR EL WHATSAPP EN LA NUBE
         window.updateGlobalWhatsApp = async () => {
             const num = document.getElementById('globalWhatsAppInput').value.replace(/\D/g,'');
-            if(!num) return alert("Pon un número");
-            await setDoc(configRef, { whatsapp: num }, { merge: true });
-            alert("Número de ventas actualizado para todos los clientes.");
+            if(!num) return alert("Escribe un número válido.");
+            try {
+                await setDoc(configRef, { whatsapp: num }, { merge: true });
+                alert("✅ ÉXITO: Número de ventas actualizado correctamente.");
+            } catch (e) {
+                alert("Error de Firebase: Asegúrate de que las reglas de la base de datos permitan escritura.");
+            }
         };
 
-        let currentPass = "1234";
-        window.accessAdmin = () => { if(prompt("Contraseña:") === currentPass) { document.getElementById('adminPanel').classList.remove('hidden'); toggleMenu(); } };
+        window.accessAdmin = () => { 
+            const p = prompt("Contraseña Administrativa:");
+            if(p === currentPass) { 
+                document.getElementById('adminPanel').classList.remove('hidden'); 
+                toggleMenu(); 
+            } else {
+                alert("Acceso denegado.");
+            }
+        };
 
         onSnapshot(query(prodsRef, orderBy("timestamp", "desc")), (s) => {
             window.allProducts = [];
             s.forEach((d) => { window.allProducts.push({ id: d.id, ...d.data() }); });
-            renderLocalProducts(); renderAdminTable();
+            renderLocalProducts(); 
+            renderAdminTable();
         });
 
         window.saveToFirebase = async () => {
@@ -159,6 +181,8 @@
                 desc: document.getElementById('prodDesc').value,
                 timestamp: Date.now()
             };
+            if(!data.name || !data.price) return alert("Nombre y Precio obligatorios");
+            
             const file = document.getElementById('prodFile').files[0];
             const run = async (img) => {
                 if(img) data.img = img;
@@ -168,15 +192,7 @@
             if(file) { const r = new FileReader(); r.onload = (e) => run(e.target.result); r.readAsDataURL(file); } else run(null);
         };
 
-        window.reduceStock = async (items) => {
-            for(const item of items) {
-                const ref = doc(db, "productos", item.id);
-                const s = await getDoc(ref);
-                if(s.exists()) await updateDoc(ref, { stock: Math.max(0, s.data().stock - 1) });
-            }
-        };
-
-        window.deleteFromFirebase = async (id) => { if(confirm("¿Borrar?")) await deleteDoc(doc(db, "productos", id)); };
+        window.deleteFromFirebase = async (id) => { if(confirm("¿Eliminar producto?")) await deleteDoc(doc(db, "productos", id)); };
     </script>
 
     <script>
@@ -201,13 +217,13 @@
             window.allProducts.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
                 const out = p.stock <= 0;
                 grid.innerHTML += `
-                <div class="product-card shadow-sm" onclick="openDetail('${p.id}')">
+                <div class="product-card shadow-sm border" onclick="openDetail('${p.id}')">
                     <img src="${p.img || 'https://via.placeholder.com/150'}">
                     <div class="p-3">
-                        <h3 class="font-bold text-[11px] uppercase h-8 line-clamp-2">${p.name}</h3>
-                        <p class="text-[10px] ${out?'text-red-500':'text-green-600'} font-bold">${out?'AGOTADO':'STOCK: '+p.stock}</p>
+                        <h3 class="font-bold text-[11px] uppercase line-clamp-2 h-8 leading-tight">${p.name}</h3>
+                        <p class="text-[10px] font-black mt-1 ${out?'text-red-500':'text-green-600'}">${out?'SIN STOCK':'STOCK: '+p.stock}</p>
                         <p class="text-lg font-black text-slate-900">${p.currency}${p.price}</p>
-                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200 text-gray-400':'bg-yellow-400'}">AÑADIR</button>
+                        <button onclick="event.stopPropagation(); addToCart('${p.id}')" ${out?'disabled':''} class="w-full mt-2 py-2 rounded-lg font-black text-[10px] ${out?'bg-gray-200 text-gray-400':'bg-yellow-400 hover:bg-yellow-500'}">AÑADIR</button>
                     </div>
                 </div>`;
             });
@@ -216,7 +232,7 @@
         function openDetail(id) {
             const p = window.allProducts.find(x => x.id === id);
             document.getElementById('mTitle').innerText = p.name;
-            document.getElementById('mDesc').innerText = p.desc || "Sin descripción.";
+            document.getElementById('mDesc').innerText = p.desc || "Sin descripción disponible.";
             document.getElementById('mPrice').innerText = `${p.currency}${p.price}`;
             document.getElementById('mImg').src = p.img || 'https://via.placeholder.com/300';
             const btn = document.getElementById('mBtn');
@@ -235,18 +251,22 @@
             const items = document.getElementById('cartItems'); items.innerHTML = '';
             let t = {}; cart.forEach((p, i) => { 
                 t[p.currency] = (t[p.currency] || 0) + parseFloat(p.price);
-                items.innerHTML += `<div class="flex justify-between bg-gray-50 p-2 rounded text-[10px]"><span>${p.name}</span><button onclick="removeFromCart(${i})" class="text-red-500 font-bold">✕</button></div>`;
+                items.innerHTML += `
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 shadow-sm">
+                    <span class="text-[10px] font-bold truncate w-40 uppercase">${p.name}</span>
+                    <button onclick="removeFromCart(${i})" class="text-red-500 bg-white w-8 h-8 rounded-full shadow-sm">✕</button>
+                </div>`; 
             });
-            let txt = ""; for(const k in t) txt += `${k}${t[k].toFixed(2)} `;
-            document.getElementById('totalContainer').innerText = cart.length ? `TOTAL: ${txt}` : "CARRITO VACÍO";
+            let txt = ""; for (const k in t) { txt += `${k}${t[k].toFixed(2)} `; }
+            document.getElementById('totalContainer').innerText = cart.length > 0 ? `TOTAL: ${txt}` : "CARRITO VACÍO";
         }
 
         function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
 
-        // ENVÍO DE PEDIDO MEJORADO (SOLUCIÓN DEFINITIVA)
+        // ENVIO DE PEDIDO CON EL NÚMERO DE LA NUBE
         async function sendOrder() {
-            if(!window.currentWhatsApp) return alert("EL DUEÑO NO HA CONFIGURADO SU WHATSAPP EN EL PANEL ADMIN.");
-            if(cart.length === 0) return alert("CARRITO VACÍO");
+            if(!window.globalWA) return alert("❌ ERROR: El administrador aún no configura el número de WhatsApp de ventas.");
+            if(cart.length === 0) return alert("Tu carrito está vacío.");
 
             const dir = document.getElementById('manualAddress').value;
             const total = document.getElementById('totalContainer').innerText;
@@ -254,31 +274,31 @@
             let msg = `🛍️ *PEDIDO GLOBAL*\n\n`;
             msg += cart.map(p => `• ${p.name} (${p.currency}${p.price})`).join('\n');
             msg += `\n\n*${total}*`;
-            if(dir) msg += `\n\n🏠 *DIRECCIÓN:* ${dir}`;
+            if(dir) msg += `\n\n🏠 *ENTREGAR EN:* ${dir}`;
 
-            await window.reduceStock(cart);
+            // Historial
             historyData.unshift({ fecha: new Date().toLocaleString(), total: total, resumen: cart.map(p => p.name).join(', ') });
             localStorage.setItem('global_history', JSON.stringify(historyData));
 
-            // Link universal para PC y Celular
-            const url = `https://api.whatsapp.com/send?phone=${window.currentWhatsApp}&text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
+            // URL Universal compatible con PC y Móvil
+            const finalUrl = `https://api.whatsapp.com/send?phone=${window.globalWA}&text=${encodeURIComponent(msg)}`;
+            window.open(finalUrl, '_blank');
             
             cart = []; updateCartUI(); toggleCart();
         }
 
         function renderHistory() {
             const list = document.getElementById('historyList');
-            list.innerHTML = historyData.length ? '' : '<p class="text-gray-400">Sin historial.</p>';
+            list.innerHTML = historyData.length === 0 ? '<p class="text-center text-gray-400 py-10 italic">No tienes pedidos anteriores.</p>' : '';
             historyData.forEach(h => {
-                list.innerHTML += `<div class="bg-white p-3 rounded-lg border-l-4 border-yellow-500 text-xs mb-2 shadow-sm"><b>${h.fecha}</b><br>${h.resumen}<br><span class="text-green-600 font-bold">${h.total}</span></div>`;
+                list.innerHTML += `<div class="bg-white p-4 rounded-2xl shadow-sm border-l-8 border-yellow-500"><p class="text-[9px] text-gray-400 mb-1 font-bold">${h.fecha}</p><p class="text-xs font-bold uppercase mb-1">${h.resumen}</p><p class="text-green-600 font-black">${h.total}</p></div>`;
             });
         }
 
         function renderAdminTable() {
             const tb = document.getElementById('adminTableBody'); if(!tb) return; tb.innerHTML = '';
             window.allProducts.forEach(p => {
-                tb.innerHTML += `<tr class="border-b"><td class="p-2">${p.name}</td><td class="p-2 flex gap-2"><button onclick="loadToEdit('${p.id}')" class="text-blue-500">Editar</button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500">X</button></td></tr>`;
+                tb.innerHTML += `<tr class="border-b"><td class="p-3 font-bold uppercase">${p.name}</td><td class="p-3 flex gap-4"><button onclick="loadToEdit('${p.id}')" class="text-blue-600 font-black">EDITAR</button><button onclick="deleteFromFirebase('${p.id}')" class="text-red-500 font-black">ELIMINAR</button></td></tr>`;
             });
         }
 
@@ -287,13 +307,20 @@
             document.getElementById('editId').value = p.id;
             document.getElementById('prodName').value = p.name;
             document.getElementById('prodPrice').value = p.price;
-            document.getElementById('prodCurrency').value = p.currency;
             document.getElementById('prodStock').value = p.stock;
             document.getElementById('prodDesc').value = p.desc || "";
+            document.getElementById('prodCurrency').value = p.currency;
             window.scrollTo(0,0);
         }
 
-        function closeAdmin() { document.getElementById('adminPanel').classList.add('hidden'); document.getElementById('editId').value = ""; }
+        function closeAdmin() { 
+            document.getElementById('adminPanel').classList.add('hidden'); 
+            document.getElementById('editId').value = "";
+            document.getElementById('prodName').value = "";
+            document.getElementById('prodPrice').value = "";
+            document.getElementById('prodStock').value = "";
+            document.getElementById('prodDesc').value = "";
+        }
     </script>
 </body>
 </html>
